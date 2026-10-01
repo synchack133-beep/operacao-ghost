@@ -13,10 +13,8 @@ class Game {
     this.container = document.getElementById('canvas-container');
     
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0x0a100d);
-    this.scene.fog = new THREE.FogExp2(0x0a100d, 0.012);
 
-    this.camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 300);
+    this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 350);
 
     this.targetCamera = new THREE.OrthographicCamera(-15, 15, 15, -15, 0.1, 100);
     this.targetCamera.rotation.x = -Math.PI / 2;
@@ -25,13 +23,6 @@ class Game {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.container.appendChild(this.renderer.domElement);
-
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
-    this.scene.add(ambientLight);
-
-    const dirLight = new THREE.DirectionalLight(0x00ff96, 1.2);
-    dirLight.position.set(30, 60, 30);
-    this.scene.add(dirLight);
 
     const targetGeo = new THREE.RingGeometry(0.8, 1.0, 16);
     const targetMat = new THREE.MeshBasicMaterial({ color: 0xff3c3c, side: THREE.DoubleSide });
@@ -109,6 +100,18 @@ class Game {
     this.missileSystem.spawnMissile(this.player.position, targetPos);
   }
 
+  updateCompass() {
+    // Converte rotação da câmera em graus de bússola
+    const deg = Math.round(((-this.camera.rotation.y * 180 / Math.PI) % 360 + 360) % 360);
+    const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+    const idx = Math.round(deg / 45) % 8;
+    
+    const compassText = document.getElementById('compass-text');
+    if (compassText) {
+      compassText.innerText = `${deg}° [ ${directions[idx]} ]`;
+    }
+  }
+
   animate() {
     if (!this.isPlaying) return;
     requestAnimationFrame(() => this.animate());
@@ -132,18 +135,18 @@ class Game {
 
     if (this.recentExplosions.length > 5) this.recentExplosions.shift();
 
+    // Atualização da Telemetria FPV Realista
     const rangeInfo = this.player.getRangeStatus();
-    document.getElementById('enemy-count').innerText = `INIMIGOS: ${this.soldierManager.getAliveCount()} / 10`;
-    document.getElementById('alt-info').innerText = `ALTITUDE: ${Math.round(this.player.position.y)}m`;
-    
-    const rangeElem = document.getElementById('range-info');
-    if (rangeElem) {
-      rangeElem.innerText = rangeInfo.isWarning 
-        ? `⚠️ SINAL FRACO: ${rangeInfo.km} / 3.00 km` 
-        : `ALCANCE OP: ${rangeInfo.km} / 3.00 km`;
-      rangeElem.style.color = rangeInfo.isWarning ? '#ff3c3c' : '#00ff96';
-    }
+    const speed = Math.round((Math.abs(this.joysticks.input.rightY) + Math.abs(this.joysticks.input.rightX)) * 42);
 
+    document.getElementById('tele-spd').innerText = speed;
+    document.getElementById('tele-alt').innerText = Math.round(this.player.position.y);
+    document.getElementById('tele-range').innerText = `${rangeInfo.km}`;
+    document.getElementById('tele-targets').innerText = `${this.soldierManager.getAliveCount()} ALVOS`;
+
+    this.updateCompass();
+
+    // RENDERIZAÇÃO
     this.renderer.setScissorTest(false);
     this.renderer.clear();
 
@@ -153,7 +156,7 @@ class Game {
     const pipW = 150;
     const pipH = 110;
     const pipX = window.innerWidth - pipW - 10;
-    const pipY = window.innerHeight - pipH - 62;
+    const pipY = window.innerHeight - pipH - 58;
 
     this.renderer.setScissorTest(true);
     this.renderer.setViewport(pipX, pipY, pipW, pipH);

@@ -3,32 +3,61 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>OPERAÇÃO GHOST — DRONE WARFARE</title>
+  <title>OPERAÇÃO GHOST — MILITARY FPV DRONE</title>
   <style>
     * { box-sizing: border-box; user-select: none; -webkit-user-select: none; touch-action: none; }
-    html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; background-color: #000; font-family: 'Courier New', monospace; color: #00ff96; }
+    html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; background-color: #000; font-family: 'Courier New', monospace; color: #ffffff; }
     #canvas-container { width: 100%; height: 100%; position: absolute; top:0; left:0; z-index: 1; }
 
-    #hud { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; display: flex; flex-direction: column; justify-content: space-between; padding: 10px; }
-    .hud-header { display: flex; justify-content: space-between; align-items: flex-start; background: rgba(0, 20, 10, 0.85); padding: 8px 12px; border: 1px solid rgba(0, 255, 150, 0.5); border-radius: 6px; width: calc(100% - 180px); }
+    /* MÁSCARA E LENTE VIGNETTE FPV */
+    #lens-overlay {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none;
+      background: radial-gradient(circle, rgba(0,0,0,0) 55%, rgba(0,0,0,0.65) 85%, rgba(0,0,0,0.95) 100%);
+      box-shadow: inset 0 0 80px rgba(0,0,0,0.8);
+    }
+
+    /* BÚSSOLA TÁTICA NO TOPO */
+    #compass-container {
+      position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+      width: 280px; height: 26px; background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 4px;
+      display: flex; justify-content: center; align-items: center;
+      overflow: hidden; z-index: 10; font-size: 11px; letter-spacing: 2px;
+      color: #e0e0e0; text-shadow: 0 0 4px #000;
+    }
+    #compass-indicator { position: absolute; top: 0; color: #ff3c3c; font-weight: bold; font-size: 12px; }
+
+    /* RETÍCULO E CURVAS DA CÂMERA */
+    #reticle-overlay {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 8; pointer-events: none;
+      display: flex; justify-content: center; align-items: center;
+    }
+
+    /* TELEMETRIA LATERAL */
+    .telemetry-box {
+      position: absolute; top: 50px; left: 15px; z-index: 10; pointer-events: none;
+      font-size: 11px; line-height: 1.6; text-shadow: 1px 1px 2px #000; color: #e2e8f0;
+      background: rgba(0, 0, 0, 0.35); padding: 8px 12px; border-left: 2px solid #00c8ff; border-radius: 2px;
+    }
+
+    #btn-fullscreen { position: absolute; top: 10px; right: 10px; width: 40px; height: 40px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255,255,255,0.4); color: #fff; font-size: 18px; border-radius: 4px; display: flex; justify-content: center; align-items: center; pointer-events: auto; z-index: 35; cursor: pointer; }
     
-    #btn-fullscreen { position: absolute; top: 10px; right: 10px; width: 44px; height: 44px; background: rgba(0, 255, 150, 0.2); border: 1px solid #00ff96; color: #00ff96; font-size: 20px; border-radius: 6px; display: flex; justify-content: center; align-items: center; pointer-events: auto; z-index: 35; cursor: pointer; }
-    #btn-fullscreen:active { background: rgba(0, 255, 150, 0.6); }
+    /* MONITOR PIP MÍSSIL */
+    #pip-container { position: absolute; top: 58px; right: 10px; width: 150px; height: 110px; border: 1px solid rgba(0, 200, 255, 0.7); background: rgba(0, 10, 20, 0.9); z-index: 20; pointer-events: none; }
+    #pip-title { position: absolute; top: -16px; left: 0; width: 100%; font-size: 8px; font-weight: bold; color: #00c8ff; text-align: center; letter-spacing: 1px; }
 
-    #pip-container { position: absolute; top: 62px; right: 10px; width: 150px; height: 110px; border: 2px solid #00c8ff; background: rgba(0, 10, 20, 0.85); z-index: 20; pointer-events: none; box-shadow: 0 0 10px rgba(0,200,255,0.4); }
-    #pip-title { position: absolute; top: -16px; left: 0; width: 100%; font-size: 8px; font-weight: bold; color: #00c8ff; text-align: center; }
-
-    .joystick-zone { position: absolute; bottom: 15px; width: 110px; height: 110px; border-radius: 50%; background: rgba(0, 255, 150, 0.08); border: 2px dashed rgba(0, 255, 150, 0.4); pointer-events: auto; z-index: 25; }
+    /* CONTROLES TOUCH */
+    .joystick-zone { position: absolute; bottom: 15px; width: 110px; height: 110px; border-radius: 50%; background: rgba(255, 255, 255, 0.05); border: 1px dashed rgba(255, 255, 255, 0.25); pointer-events: auto; z-index: 25; }
     #zone-left { left: 15px; }
     #zone-right { right: 15px; }
+    .joystick-stick { width: 40px; height: 40px; border-radius: 50%; background: rgba(255, 255, 255, 0.3); border: 1px solid #fff; position: absolute; top: 35px; left: 35px; pointer-events: none; }
 
-    .joystick-stick { width: 44px; height: 44px; border-radius: 50%; background: rgba(0, 255, 150, 0.4); border: 2px solid #00ff96; position: absolute; top: 33px; left: 33px; pointer-events: none; }
+    /* BOTÃO DE ATAQUE */
+    #btn-drop-missile { position: absolute; bottom: 135px; right: 20px; width: 66px; height: 66px; border-radius: 50%; background: rgba(255, 60, 60, 0.4); border: 2px solid #ff3c3c; color: #fff; font-size: 22px; display: flex; justify-content: center; align-items: center; pointer-events: auto; z-index: 30; font-weight: bold; text-shadow: 0 0 5px #000; }
+    #btn-drop-missile:active { background: rgba(255, 60, 60, 0.8); transform: scale(0.92); }
 
-    #btn-drop-missile { position: absolute; bottom: 135px; right: 20px; width: 68px; height: 68px; border-radius: 50%; background: rgba(255, 180, 0, 0.35); border: 2px solid #ffb400; color: #ffb400; font-size: 22px; display: flex; justify-content: center; align-items: center; pointer-events: auto; z-index: 30; font-weight: bold; }
-    #btn-drop-missile:active { background: rgba(255, 180, 0, 0.8); transform: scale(0.92); }
-
-    .modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 10, 5, 0.95); z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
-    .btn-main { pointer-events: auto; background: #00ff96; color: #000; border: none; padding: 14px 28px; font-size: 15px; font-weight: bold; border-radius: 6px; cursor: pointer; }
+    .modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 15, 12, 0.96); z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
+    .btn-main { pointer-events: auto; background: #ff3c3c; color: #fff; border: none; padding: 14px 28px; font-size: 15px; font-weight: bold; border-radius: 4px; cursor: pointer; letter-spacing: 1px; }
   </style>
   <script type="importmap">
     {
@@ -40,20 +69,37 @@
 </head>
 <body>
   <div id="canvas-container"></div>
+  <div id="lens-overlay"></div>
+
+  <!-- RETÍCULO ÓPTICO MILITAR SVG -->
+  <div id="reticle-overlay">
+    <svg width="100%" height="100%" viewBox="0 0 800 450" preserveAspectRatio="none">
+      <!-- Brackets de Câmera FPV -->
+      <path d="M 280 150 Q 250 225 280 300" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" fill="none"/>
+      <path d="M 520 150 Q 550 225 520 300" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" fill="none"/>
+      <!-- Mira Central -->
+      <circle cx="400" cy="225" r="4" fill="none" stroke="#ff3c3c" stroke-width="1.5"/>
+      <line x1="380" y1="225" x2="392" y2="225" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
+      <line x1="408" y1="225" x2="420" y2="225" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
+      <line x1="400" y1="205" x2="400" y2="217" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
+      <line x1="400" y1="233" x2="400" y2="245" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
+    </svg>
+  </div>
 
   <button id="btn-fullscreen" title="Tela Cheia">⛶</button>
 
-  <div id="hud">
-    <div class="hud-header">
-      <div>
-        <div style="font-size: 9px; font-weight: bold; color: #00ff96;">DRONE FPV RECON</div>
-        <div id="enemy-count" style="font-size: 11px; font-weight: bold; color: #ff3c3c; margin-top: 2px;">INIMIGOS: 10/10</div>
-      </div>
-      <div style="text-align: right;">
-        <div id="alt-info" style="font-size: 10px; color: #00c8ff;">ALTITUDE: 12m</div>
-        <div id="range-info" style="font-size: 10px; color: #00ff96; margin-top: 2px;">ALCANCE OP: 0.10 / 3.00 km</div>
-      </div>
-    </div>
+  <!-- BÚSSOLA -->
+  <div id="compass-container">
+    <span id="compass-indicator">▼</span>
+    <div id="compass-text">NW . . N . . NE . . E . . SE</div>
+  </div>
+
+  <!-- TELEMETRIA -->
+  <div class="telemetry-box">
+    <div><b>SPD:</b> <span id="tele-spd">0</span> km/h</div>
+    <div><b>ALT:</b> <span id="tele-alt">12</span> m</div>
+    <div><b>RANGE:</b> <span id="tele-range">0.10</span> / 3.00 km</div>
+    <div><b>TARGETS:</b> <span id="tele-targets" style="color:#ff3c3c;">10 ALVOS</span></div>
   </div>
 
   <div id="pip-container">
@@ -66,12 +112,11 @@
   <button id="btn-drop-missile">🚀</button>
 
   <div id="modal-start" class="modal">
-    <h1>OPERAÇÃO GHOST 3D</h1>
-    <p><b>CENÁRIO EXPANDIDO & OPERADOR DE DRONE</b><br><br>
-    📡 <b>Operador e Tubo de Lançamento:</b> Localizados na retaguarda em uma posição fortificada.<br>
-    📡 <b>Alcance Limitado:</b> Máximo de 3.00 km de distância do operador.<br>
-    🕹️ <b>Controles:</b> Use os dois analógicos e lance os mísseis no monitor superior (PiP).</p>
-    <button id="btn-start" class="btn-main">INICIAR COMBATE</button>
+    <h2>MILITARY FPV DRONE RECON</h2>
+    <p><b>SISTEMA DE ATAQUE & RECONHECIMENTO</b><br><br>
+    📡 <b>Cenário de Guerra:</b> Campo aberto com floresta e blindados inimigos.<br>
+    🕹️ <b>Controles:</b> Use os analógicos para pilotagem e o botão vermelho para disparar mísseis.</p>
+    <button id="btn-start" class="btn-main">ENGATAR MISSÃO</button>
   </div>
 
   <script type="module" src="./src/main.js"></script>
