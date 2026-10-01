@@ -3,66 +3,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="theme-color" content="#08120f"><title>OPERAÇÃO GHOST — Drone Warfare</title>
 <style>
 :root{--green:#9dffca;--line:#65d9a477;--panel:#06110ddd;--amber:#ffd47a;--red:#ff6666}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100f;color:#d7ffe8;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;touch-action:none}canvas{display:block}#game{position:fixed;inset:0}#hud{position:fixed;inset:0;pointer-events:none;text-shadow:0 1px 5px #000} .panel{background:linear-gradient(135deg,#06130fe8,#06130f9c);border:1px solid var(--line);padding:10px 12px;backdrop-filter:blur(5px);clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,0 100%)}#brand{position:absolute;top:14px;left:14px;font-weight:bold;letter-spacing:2px;font-size:14px}#brand small{display:block;color:#81bda0;font-size:9px;letter-spacing:1px;margin-top:4px}#stats{position:absolute;top:14px;right:14px;min-width:145px;font-size:11px;line-height:1.8}#mission{position:absolute;top:100px;left:14px;width:min(260px,46vw);font-size:11px;line-height:1.65}#mission strong{color:var(--green);font-size:12px}#objective{color:#ffe29a;margin-top:5px}#reticle{position:absolute;left:50%;top:50%;width:32px;height:32px;transform:translate(-50%,-50%);border:1px solid #9dffca88;border-radius:50%}#reticle:before,#reticle:after{content:"";position:absolute;background:var(--green)}#reticle:before{width:48px;height:1px;left:-9px;top:15px}#reticle:after{height:48px;width:1px;top:-9px;left:15px}#reticle i{position:absolute;width:4px;height:4px;background:var(--green);border-radius:50%;top:13px;left:13px}#bottom{position:absolute;left:50%;bottom:15px;transform:translateX(-50%);display:flex;gap:7px;align-items:end}button{font:inherit;color:#d7ffe8;background:#071710eF;border:1px solid #65d9a4a0;border-radius:5px;padding:10px 12px;cursor:pointer;pointer-events:auto;min-height:39px}button:active,button.active{background:#1b6244;border-color:var(--green)}button:disabled{opacity:.4}#bottom button{font-size:10px}#alert{position:absolute;top:45%;left:50%;transform:translate(-50%,-50%);font-size:13px;color:var(--amber);letter-spacing:2px;text-align:center;max-width:90vw}#mapbox{position:absolute;right:14px;bottom:14px;width:120px;height:120px;padding:5px}#map{width:100%;height:100%;display:block}#hint{position:absolute;bottom:16px;left:14px;font-size:10px;color:#b0d4c0;max-width:220px;line-height:1.6}#overlay{position:fixed;inset:0;background:radial-gradient(ellipse at center,#112c23ed,#030907f5);display:flex;align-items:center;justify-content:center;z-index:5;padding:20px}#card{width:min(560px,100%);max-height:90vh;overflow:auto;border:1px solid #65d9a4a8;background:#06110ff2;padding:clamp(20px,5vw,38px);box-shadow:0 0 70px #1a9b6040}h1{font-size:clamp(28px,7vw,46px);letter-spacing:3px;margin:0;color:#d9ffeb}h1 span{color:var(--green)}.eyebrow{color:var(--green);font-size:10px;letter-spacing:3px;margin-bottom:14px}.desc{color:#b5cfc1;line-height:1.65;font-size:13px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}.primary{background:#b4ffd5;color:#062016;font-weight:bold}.tiny{font-size:10px;color:#8bb29e;line-height:1.6;margin-top:15px}.mobile-controls{display:none;position:fixed;inset:0;pointer-events:none;z-index:3}.stick{position:absolute;bottom:32px;left:24px;width:116px;height:116px;border:1px solid #9dffca80;border-radius:50%;background:#06110f66;pointer-events:auto;touch-action:none}.knob{position:absolute;width:44px;height:44px;border-radius:50%;left:35px;top:35px;background:#9dffca55;border:1px solid var(--green)}#touchLook{position:absolute;right:0;top:20%;height:60%;width:48%;pointer-events:auto;touch-action:none}#touchButtons{position:absolute;right:16px;bottom:30px;display:grid;grid-template-columns:repeat(2,58px);gap:8px;pointer-events:auto}#touchButtons button{height:50px;padding:3px;font-size:10px;background:#06110fdd}#toast{position:absolute;top:76px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--amber);text-align:center;max-width:85vw}body.thermal canvas{filter:sepia(1) hue-rotate(65deg) saturate(2.7) contrast(1.2)}body.night canvas{filter:brightness(.65) hue-rotate(65deg) saturate(.7)}@media(max-width:650px){#brand{font-size:12px;top:9px;left:9px}#stats{top:9px;right:9px;font-size:10px;min-width:120px;padding:6px 8px}#mission{top:78px;left:9px;padding:7px 9px;font-size:10px;width:44vw}#mapbox{width:88px;height:88px;right:8px;bottom:8px}#hint{display:none}#bottom{bottom:9px;gap:4px}#bottom button{font-size:9px;padding:8px 7px;min-height:34px}#reticle{width:25px;height:25px}#reticle:before{left:-8px;top:11px;width:39px}#reticle:after{top:-8px;left:11px;height:39px}#reticle i{top:10px;left:10px}.mobile-controls{display:block}#mission .sub{display:none}}
-</style>
-<style>
-  /* Ajuste de emergência para telas horizontais baixas (Celulares em Landscape) */
-  @media screen and (max-height: 500px) {
-    #modal, .modal, #instructions-modal, #start-modal, div[class*="modal"], div[id*="modal"] {
-      position: fixed !important;
-      top: 50% !important;
-      left: 50% !important;
-      transform: translate(-50%, -50%) !important;
-      width: 90vw !important;
-      max-width: 580px !important;
-      max-height: 94vh !important;
-      padding: 10px 16px !important;
-      margin: 0 !important;
-      box-sizing: border-box !important;
-      overflow-y: auto !important;
-      -webkit-overflow-scrolling: touch !important;
-    }
-
-    #modal h1, .modal h1, #modal h2, .modal h2 {
-      font-size: 15px !important;
-      margin: 2px 0 4px 0 !important;
-    }
-
-    #modal p, .modal p, #modal div, .modal div {
-      font-size: 11px !important;
-      line-height: 1.25 !important;
-      margin: 3px 0 !important;
-    }
-
-    /* Garante que a área dos botões fique visível */
-    #modal button, .modal button, .btn, #start-btn, button {
-      padding: 6px 16px !important;
-      font-size: 12px !important;
-      margin: 6px 4px 2px 4px !important;
-      display: inline-block !important;
-    }
-  }
-</style>
-
-
-<style>
-  /* FORÇA O MENU A SER COMPACTO E VISÍVEL EM QUALQUER CELULAR */
-  #modal, .modal, #instructions-modal, #start-modal, div[class*='modal'], div[id*='modal'], div[id*='briefing'] {
-  }
-
-  /* REDUZ O TÍTULO GIGANTE */
-  #modal h1, .modal h1, #modal h2, .modal h2, h1, h2 {
-  }
-
-  /* REDUZ O TEXTO EXPLICATIVO */
-  #modal p, .modal p, p {
-  }
-
-  /* DESTAQUE E VISIBILIDADE DOS BOTÕES */
-  #modal button, .modal button, .btn, button {
-  }
-</style>
-
-</head><body><div id="game"></div><div id="hud"><div id="brand" class="panel">OPERAÇÃO GHOST<small>UNIDADE REMOTA // SIMULAÇÃO FICTÍCIA</small></div><div id="stats" class="panel">ALT <b id="alt">45</b> m<br>VEL <b id="speed">0</b> km/h<br>BATERIA <b id="battery">100</b>%<br>SINAL <b id="signal">100</b>%<br>SISTEMA <b id="health">100</b>%</div><div id="mission" class="panel"><strong id="missionName">01 / PRIMEIRO CONTATO</strong><div id="missionText">Explore o setor e localize o ponto de observação.</div><div id="objective">OBJETIVO: 0 / 2</div><div class="sub">PROTOCOLO: identifique antes de agir.</div></div><div id="reticle"><i></i></div><div id="alert"></div><div id="toast"></div><div id="hint">WASD mover · Espaço subir · Shift descer<br>Mouse olhar · Clique disparo fictício · E interagir · Esc pausar</div><div id="bottom"><button id="viewBtn">VISÃO: NORMAL</button><button id="interactBtn">E · INTERAGIR</button><button id="fireBtn">PULSO · 8</button><button id="pauseBtn">Ⅱ PAUSAR</button></div><div id="mapbox" class="panel"><canvas id="map" width="120" height="120"></canvas></div></div>
+</style></head><body><div id="game"></div><div id="hud"><div id="brand" class="panel">OPERAÇÃO GHOST<small>UNIDADE REMOTA // SIMULAÇÃO FICTÍCIA</small></div><div id="stats" class="panel">ALT <b id="alt">45</b> m<br>VEL <b id="speed">0</b> km/h<br>BATERIA <b id="battery">100</b>%<br>SINAL <b id="signal">100</b>%<br>SISTEMA <b id="health">100</b>%</div><div id="mission" class="panel"><strong id="missionName">01 / PRIMEIRO CONTATO</strong><div id="missionText">Explore o setor e localize o ponto de observação.</div><div id="objective">OBJETIVO: 0 / 2</div><div class="sub">PROTOCOLO: identifique antes de agir.</div></div><div id="reticle"><i></i></div><div id="alert"></div><div id="toast"></div><div id="hint">WASD mover · Espaço subir · Shift descer<br>Mouse olhar · Clique disparo fictício · E interagir · Esc pausar</div><div id="bottom"><button id="viewBtn">VISÃO: NORMAL</button><button id="interactBtn">E · INTERAGIR</button><button id="fireBtn">PULSO · 8</button><button id="pauseBtn">Ⅱ PAUSAR</button></div><div id="mapbox" class="panel"><canvas id="map" width="120" height="120"></canvas></div></div>
 <div class="mobile-controls" id="mobile"><div class="stick" id="stick"><div class="knob" id="knob"></div></div><div id="touchLook"></div><div id="touchButtons"><button id="upBtn">▲ SUBIR</button><button id="downBtn">▼ DESCER</button><button id="touchFire">PULSO</button><button id="touchInteract">AÇÃO</button></div></div>
 <div id="overlay"><div id="card"><div class="eyebrow">CENTRO DE OPERAÇÕES // CANAL SEGURO</div><h1>OPERAÇÃO <span>GHOST</span></h1><p class="desc">Você controla um drone de reconhecimento em uma zona de conflito inteiramente fictícia. Explore, identifique ameaças, proteja unidades aliadas e retorne à base. O jogo prioriza observação, navegação e decisões responsáveis.</p><p class="desc"><b>MISSÃO 01 — PRIMEIRO CONTATO</b><br>Marque dois pontos de interesse e retorne ao círculo da base. Use o pulso de energia fictício apenas contra drones hostis identificados.</p><div class="actions"><button class="primary" id="startBtn">INICIAR MISSÃO</button><button id="howBtn">COMO JOGAR</button></div><div class="tiny" id="menuNote">Carregando ambiente 3D…</div></div></div>
 <script type="module">
@@ -123,7 +64,7 @@ if(objectiveCount>=m.required&&drone.position.distanceTo(new THREE.Vector3(0,gro
 init();
 </script>
 <style>
-/* 1. TELA CHEIA REAL SEM BORDAS PRETAS */
+/* --- TELA CHEIA E SUPORTE A CELULAR --- */
 html, body {
   margin: 0 !important;
   padding: 0 !important;
@@ -134,57 +75,81 @@ html, body {
   touch-action: none !important;
   user-select: none !important;
   -webkit-user-select: none !important;
-  -webkit-touch-callout: none !important;
 }
 
-#game-container, #canvas-container, canvas, .game-wrapper, main, body > div:not(#mobile-hud-root) {
+canvas:not(#touch-canvas) {
   width: 100vw !important;
   height: 100vh !important;
-  max-width: 100vw !important;
-  max-height: 100vh !important;
-  position: absolute !important;
+  display: block !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+}
+
+#game-container, #canvas-container, .game-wrapper, main {
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: none !important;
+  max-height: none !important;
+  position: fixed !important;
   top: 0 !important;
   left: 0 !important;
   margin: 0 !important;
   padding: 0 !important;
-  box-sizing: border-box !important;
 }
 
-/* 2. ADAPTAÇÃO RESPONSIVA DO MENU DE INÍCIO */
-#modal, .modal, #menu, .menu-overlay, div[class*="modal"], div[class*="menu"], #start-screen, .start-screen {
+/* --- PAINEL DE MENU COMPACTO EM MODO HORIZONTAL --- */
+#modal, .modal, #start-screen, #briefing, div[class*="modal"], div[id*="modal"] {
   position: fixed !important;
-  z-index: 10000000 !important;
-  max-width: 92vw !important;
-  max-height: 88vh !important;
   top: 50% !important;
   left: 50% !important;
   transform: translate(-50%, -50%) !important;
-  padding: 16px !important;
-  box-sizing: border-box !important;
+  width: 90vw !important;
+  max-width: 460px !important;
+  max-height: 85vh !important;
   overflow-y: auto !important;
-  background: rgba(5, 18, 12, 0.94) !important;
-  border: 1px solid rgba(0, 255, 150, 0.4) !important;
-  box-shadow: 0 0 25px rgba(0, 255, 150, 0.25) !important;
+  padding: 10px 14px !important;
+  box-sizing: border-box !important;
+  background: rgba(4, 16, 11, 0.96) !important;
+  border: 1px solid #00ff96 !important;
+  box-shadow: 0 0 20px rgba(0, 255, 150, 0.3) !important;
   border-radius: 8px !important;
+  z-index: 9999999 !important;
 }
 
-#modal h1, #modal h2, .modal h1, .modal h2 { font-size: clamp(16px, 4vw, 24px) !important; }
-#modal p, .modal p { font-size: clamp(11px, 2.5vw, 14px) !important; line-height: 1.3 !important; }
-#modal button, .modal button, .btn { padding: 10px 18px !important; font-size: clamp(12px, 3vw, 15px) !important; margin: 5px !important; }
+/* Redução dos textos para caber na horizontal */
+#modal h1, .modal h1, h1 { font-size: clamp(14px, 4vh, 18px) !important; margin: 2px 0 4px 0 !important; }
+#modal h2, .modal h2, h2 { font-size: clamp(12px, 3vh, 15px) !important; margin: 2px 0 4px 0 !important; }
+#modal p, .modal p, p { font-size: clamp(10px, 2.5vh, 12px) !important; line-height: 1.2 !important; margin: 3px 0 !important; }
 
-/* 3. INTERFACE TOUCH E BOTÕES TÁTICOS */
-#mobile-hud-root {
+/* Botões INICIAR MISSÃO e COMO JOGAR bem visíveis */
+#modal button, .modal button, button, .btn {
+  display: inline-block !important;
+  padding: 7px 16px !important;
+  font-size: clamp(11px, 2.8vh, 13px) !important;
+  font-weight: bold !important;
+  margin: 6px 4px 2px 4px !important;
+  background: #00ff96 !important;
+  color: #020c07 !important;
+  border: none !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  box-shadow: 0 0 10px rgba(0, 255, 150, 0.5) !important;
+}
+
+/* --- OVERLAY DOS BOTÕES TOUCH --- */
+#hud-touch-layer {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 999999;
+  z-index: 99999;
   pointer-events: none;
   display: none;
 }
 
-#touch-overlay-canvas {
+#touch-canvas {
   position: absolute;
   top: 0;
   left: 0;
@@ -193,267 +158,201 @@ html, body {
   pointer-events: none;
 }
 
-.hud-btn-cluster {
+.touch-controls-group {
   position: absolute;
-  bottom: 20px;
-  right: 20px;
-  width: 180px;
-  height: 180px;
+  bottom: 15px;
+  right: 15px;
   pointer-events: auto;
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
 }
 
-.hud-btn {
-  position: absolute;
-  background: rgba(5, 20, 14, 0.75);
-  border: 1.5px solid rgba(0, 255, 150, 0.5);
+.t-btn {
+  background: rgba(5, 20, 14, 0.85);
+  border: 1.5px solid rgba(0, 255, 150, 0.6);
   color: #00ff96;
-  font-family: monospace, sans-serif;
+  font-family: monospace;
   font-weight: bold;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   touch-action: none;
-  backdrop-filter: blur(4px);
-  box-shadow: 0 0 10px rgba(0, 255, 150, 0.2);
   user-select: none;
   -webkit-user-select: none;
 }
-
-.hud-btn:active {
-  background: rgba(0, 255, 150, 0.4);
-  color: #ffffff;
-  transform: scale(0.92);
-}
-
-#btn-fogo { right: 0; bottom: 0; width: 65px; height: 65px; border-color: rgba(255, 60, 60, 0.8); color: #ff5555; font-size: 11px; }
-#btn-subir { right: 10px; bottom: 80px; width: 50px; height: 50px; font-size: 16px; }
-#btn-descer { right: 80px; bottom: 10px; width: 50px; height: 50px; font-size: 16px; }
-#btn-interagir { right: 75px; bottom: 75px; width: 44px; height: 44px; font-size: 12px; }
+.t-btn:active { background: rgba(0, 255, 150, 0.5); color: #fff; }
+#tb-fire { width: 60px; height: 60px; border-color: #ff4444; color: #ff5555; font-size: 11px; }
+#tb-up { width: 46px; height: 46px; font-size: 15px; }
+#tb-down { width: 46px; height: 46px; font-size: 15px; }
+#tb-use { width: 40px; height: 40px; font-size: 11px; }
 </style>
 
-<div id="mobile-hud-root">
-  <canvas id="touch-overlay-canvas"></canvas>
-  <div class="hud-btn-cluster">
-    <div id="btn-interagir" class="hud-btn">E</div>
-    <div id="btn-subir" class="hud-btn">▲</div>
-    <div id="btn-descer" class="hud-btn">▼</div>
-    <div id="btn-fogo" class="hud-btn">FOGO</div>
+<div id="hud-touch-layer">
+  <canvas id="touch-canvas"></canvas>
+  <div class="touch-controls-group">
+    <div id="tb-use" class="t-btn">E</div>
+    <div id="tb-down" class="t-btn">▼</div>
+    <div id="tb-up" class="t-btn">▲</div>
+    <div id="tb-fire" class="t-btn">FOGO</div>
   </div>
 </div>
 
 <script>
 (function() {
-  // Ignora chamadas de PointerLock que exibem avisos no navegador
   Element.prototype.requestPointerLock = function() { return Promise.resolve(); };
-  document.exitPointerLock = function() {};
 
-  // Força o Three.js a aceitar movimentação de câmera por toque
-  function patchPointerLockControls() {
-    if (window.THREE && THREE.PointerLockControls) {
-      const origOnMouseMove = THREE.PointerLockControls.prototype.onMouseMove;
-      THREE.PointerLockControls.prototype.onMouseMove = function(event) {
-        const wasLocked = this.isLocked;
-        this.isLocked = true;
-        origOnMouseMove.call(this, event);
-        this.isLocked = wasLocked;
-      };
+  function fitCanvas() {
+    const c = document.querySelector('canvas:not(#touch-canvas)');
+    if (c) {
+      c.style.width = window.innerWidth + 'px';
+      c.style.height = window.innerHeight + 'px';
     }
-  }
-  patchPointerLockControls();
-  window.addEventListener('DOMContentLoaded', patchPointerLockControls);
-
-  // Redimensionamento do Canvas
-  function resizeGame() {
-    const canvas = document.querySelector('canvas:not(#touch-overlay-canvas)');
-    if (canvas) {
-      canvas.style.width = window.innerWidth + 'px';
-      canvas.style.height = window.innerHeight + 'px';
-    }
-    const hudCanvas = document.getElementById('touch-overlay-canvas');
-    if (hudCanvas) {
-      hudCanvas.width = window.innerWidth;
-      hudCanvas.height = window.innerHeight;
+    const tc = document.getElementById('touch-canvas');
+    if (tc) {
+      tc.width = window.innerWidth;
+      tc.height = window.innerHeight;
     }
     window.dispatchEvent(new Event('resize'));
   }
+  window.addEventListener('resize', fitCanvas);
+  window.addEventListener('orientationchange', () => setTimeout(fitCanvas, 200));
 
-  window.addEventListener('resize', resizeGame);
-  window.addEventListener('orientationchange', () => setTimeout(resizeGame, 200));
-
-  // Ativa os controles ao clicar em "INICIAR MISSÃO"
-  const hudRoot = document.getElementById('mobile-hud-root');
+  const hudLayer = document.getElementById('hud-touch-layer');
   document.addEventListener('click', function(e) {
-    const txt = (e.target.innerText || e.target.textContent || '').toUpperCase();
-    if (txt.includes('INICIAR') || txt.includes('START') || e.target.id === 'start-btn') {
-      if (hudRoot) hudRoot.style.display = 'block';
-      resizeGame();
+    const text = (e.target.innerText || e.target.textContent || '').toUpperCase();
+    if (text.includes('INICIAR') || text.includes('START') || text.includes('JOGAR')) {
+      if (hudLayer) hudLayer.style.display = 'block';
+      setTimeout(fitCanvas, 100);
     }
   }, true);
 
-  // Áreas Touch (Esquerda = Joystick / Direita = Câmera)
   const leftZone = document.createElement('div');
-  leftZone.style.cssText = 'position:fixed; top:0; left:0; width:50vw; height:100vh; z-index:999998; touch-action:none;';
-
+  leftZone.style.cssText = 'position:fixed; top:0; left:0; width:50vw; height:100vh; z-index:99998; touch-action:none;';
   const rightZone = document.createElement('div');
-  rightZone.style.cssText = 'position:fixed; top:0; right:0; width:50vw; height:100vh; z-index:999998; touch-action:none;';
-
+  rightZone.style.cssText = 'position:fixed; top:0; right:0; width:50vw; height:100vh; z-index:99998; touch-action:none;';
   document.body.appendChild(leftZone);
   document.body.appendChild(rightZone);
 
-  // Simulação de Teclado (WASD)
-  const activeKeys = { w: false, a: false, s: false, d: false };
-  function setKeyState(key, code, isPressed) {
-    if (activeKeys[key] === isPressed) return;
-    activeKeys[key] = isPressed;
-    const type = isPressed ? 'keydown' : 'keyup';
-    const ev = new KeyboardEvent(type, { key: key, code: code, bubbles: true, cancelable: true });
+  const keys = { w: false, a: false, s: false, d: false };
+  function sendKey(key, code, down) {
+    if (keys[key] === down) return;
+    keys[key] = down;
+    const ev = new KeyboardEvent(down ? 'keydown' : 'keyup', { key: key, code: code, bubbles: true });
     window.dispatchEvent(ev);
     document.dispatchEvent(ev);
   }
 
-  // Joystick Analógico Dinâmico (Lado Esquerdo)
-  const hudCanvas = document.getElementById('touch-overlay-canvas');
-  const ctx = hudCanvas ? hudCanvas.getContext('2d') : null;
-  let joyTouchId = null;
-  let joyBase = { x: 0, y: 0 };
-  let joyStick = { x: 0, y: 0 };
-  const maxRadius = 45;
+  const tc = document.getElementById('touch-canvas');
+  const ctx = tc ? tc.getContext('2d') : null;
+  let jId = null, jBase = {x:0, y:0}, jStick = {x:0, y:0};
+  const maxR = 40;
 
   leftZone.addEventListener('touchstart', (e) => {
-    if (joyTouchId !== null) return;
-    const touch = e.changedTouches[0];
-    joyTouchId = touch.identifier;
-    joyBase = { x: touch.clientX, y: touch.clientY };
-    joyStick = { x: touch.clientX, y: touch.clientY };
-    drawJoystick();
+    if (jId !== null) return;
+    const t = e.changedTouches[0];
+    jId = t.identifier;
+    jBase = { x: t.clientX, y: t.clientY };
+    jStick = { x: t.clientX, y: t.clientY };
+    renderJoy();
   }, { passive: false });
 
   leftZone.addEventListener('touchmove', (e) => {
     for (let i = 0; i < e.changedTouches.length; i++) {
-      if (e.changedTouches[i].identifier === joyTouchId) {
-        const touch = e.changedTouches[i];
-        let dx = touch.clientX - joyBase.x;
-        let dy = touch.clientY - joyBase.y;
+      if (e.changedTouches[i].identifier === jId) {
+        const t = e.changedTouches[i];
+        let dx = t.clientX - jBase.x;
+        let dy = t.clientY - jBase.y;
         const dist = Math.hypot(dx, dy);
+        if (dist > maxR) { dx = (dx / dist) * maxR; dy = (dy / dist) * maxR; }
+        jStick = { x: jBase.x + dx, y: jBase.y + dy };
 
-        if (dist > maxRadius) {
-          dx = (dx / dist) * maxRadius;
-          dy = (dy / dist) * maxRadius;
-        }
+        sendKey('w', 'KeyW', dy < -10);
+        sendKey('s', 'KeyS', dy > 10);
+        sendKey('a', 'KeyA', dx < -10);
+        sendKey('d', 'KeyD', dx > 10);
 
-        joyStick = { x: joyBase.x + dx, y: joyBase.y + dy };
-
-        setKeyState('w', 'KeyW', dy < -12);
-        setKeyState('s', 'KeyS', dy > 12);
-        setKeyState('a', 'KeyA', dx < -12);
-        setKeyState('d', 'KeyD', dx > 12);
-
-        drawJoystick();
+        renderJoy();
         break;
       }
     }
   }, { passive: false });
 
-  const releaseJoystick = (e) => {
+  const endJoy = (e) => {
     for (let i = 0; i < e.changedTouches.length; i++) {
-      if (e.changedTouches[i].identifier === joyTouchId) {
-        joyTouchId = null;
-        setKeyState('w', 'KeyW', false);
-        setKeyState('s', 'KeyS', false);
-        setKeyState('a', 'KeyA', false);
-        setKeyState('d', 'KeyD', false);
-        if (ctx) ctx.clearRect(0, 0, hudCanvas.width, hudCanvas.height);
+      if (e.changedTouches[i].identifier === jId) {
+        jId = null;
+        sendKey('w', 'KeyW', false); sendKey('s', 'KeyS', false);
+        sendKey('a', 'KeyA', false); sendKey('d', 'KeyD', false);
+        if (ctx) ctx.clearRect(0, 0, tc.width, tc.height);
         break;
       }
     }
   };
+  leftZone.addEventListener('touchend', endJoy);
+  leftZone.addEventListener('touchcancel', endJoy);
 
-  leftZone.addEventListener('touchend', releaseJoystick);
-  leftZone.addEventListener('touchcancel', releaseJoystick);
-
-  function drawJoystick() {
-    if (!ctx || joyTouchId === null) return;
-    ctx.clearRect(0, 0, hudCanvas.width, hudCanvas.height);
-
+  function renderJoy() {
+    if (!ctx || jId === null) return;
+    ctx.clearRect(0, 0, tc.width, tc.height);
     ctx.beginPath();
-    ctx.arc(joyBase.x, joyBase.y, maxRadius, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(0, 255, 150, 0.08)';
-    ctx.strokeStyle = 'rgba(0, 255, 150, 0.4)';
+    ctx.arc(jBase.x, jBase.y, maxR, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(0,255,150,0.1)';
+    ctx.strokeStyle = 'rgba(0,255,150,0.5)';
     ctx.lineWidth = 2;
-    ctx.fill();
-    ctx.stroke();
-
+    ctx.fill(); ctx.stroke();
     ctx.beginPath();
-    ctx.arc(joyStick.x, joyStick.y, 22, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(0, 255, 150, 0.65)';
+    ctx.arc(jStick.x, jStick.y, 18, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(0,255,150,0.7)';
     ctx.fill();
   }
 
-  // Rotação da Câmera (Lado Direito)
-  let camTouchId = null;
-  let lastCamX = 0, lastCamY = 0;
-
+  let cId = null, lastX = 0, lastY = 0;
   rightZone.addEventListener('touchstart', (e) => {
-    if (camTouchId !== null) return;
-    const touch = e.changedTouches[0];
-    camTouchId = touch.identifier;
-    lastCamX = touch.clientX;
-    lastCamY = touch.clientY;
+    if (cId !== null) return;
+    const t = e.changedTouches[0];
+    cId = t.identifier; lastX = t.clientX; lastY = t.clientY;
   }, { passive: false });
 
   rightZone.addEventListener('touchmove', (e) => {
     for (let i = 0; i < e.changedTouches.length; i++) {
-      if (e.changedTouches[i].identifier === camTouchId) {
-        const touch = e.changedTouches[i];
-        const deltaX = (touch.clientX - lastCamX) * 2.2;
-        const deltaY = (touch.clientY - lastCamY) * 2.2;
-        lastCamX = touch.clientX;
-        lastCamY = touch.clientY;
-
-        window.dispatchEvent(new MouseEvent('mousemove', {
-          movementX: deltaX,
-          movementY: deltaY,
-          clientX: touch.clientX,
-          clientY: touch.clientY,
-          bubbles: true
-        }));
+      if (e.changedTouches[i].identifier === cId) {
+        const t = e.changedTouches[i];
+        const dx = (t.clientX - lastX) * 2;
+        const dy = (t.clientY - lastY) * 2;
+        lastX = t.clientX; lastY = t.clientY;
+        window.dispatchEvent(new MouseEvent('mousemove', { movementX: dx, movementY: dy, bubbles: true }));
         break;
       }
     }
   }, { passive: false });
 
-  const releaseCamera = (e) => {
+  const endCam = (e) => {
     for (let i = 0; i < e.changedTouches.length; i++) {
-      if (e.changedTouches[i].identifier === camTouchId) {
-        camTouchId = null;
-        break;
-      }
+      if (e.changedTouches[i].identifier === cId) { cId = null; break; }
     }
   };
+  rightZone.addEventListener('touchend', endCam);
+  rightZone.addEventListener('touchcancel', endCam);
 
-  rightZone.addEventListener('touchend', releaseCamera);
-  rightZone.addEventListener('touchcancel', releaseCamera);
-
-  // Mapeamento dos Botões de Ação
-  function bindTouchBtn(id, key, code) {
+  function bindAction(id, key, code) {
     const btn = document.getElementById(id);
     if (!btn) return;
-    btn.addEventListener('touchstart', (e) => { e.preventDefault(); setKeyState(key, code, true); });
-    btn.addEventListener('touchend', (e) => { e.preventDefault(); setKeyState(key, code, false); });
+    btn.addEventListener('touchstart', (e) => { e.preventDefault(); sendKey(key, code, true); });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); sendKey(key, code, false); });
   }
+  bindAction('tb-up', ' ', 'Space');
+  bindAction('tb-down', 'Shift', 'ShiftLeft');
+  bindAction('tb-use', 'e', 'KeyE');
 
-  bindTouchBtn('btn-subir', ' ', 'Space');
-  bindTouchBtn('btn-descer', 'Shift', 'ShiftLeft');
-  bindTouchBtn('btn-interagir', 'e', 'KeyE');
-
-  const fireBtn = document.getElementById('btn-fogo');
-  if (fireBtn) {
-    fireBtn.addEventListener('touchstart', (e) => {
+  const fBtn = document.getElementById('tb-fire');
+  if (fBtn) {
+    fBtn.addEventListener('touchstart', (e) => {
       e.preventDefault();
       window.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, button: 0 }));
     });
-    fireBtn.addEventListener('touchend', (e) => {
+    fBtn.addEventListener('touchend', (e) => {
       e.preventDefault();
       window.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, button: 0 }));
     });
