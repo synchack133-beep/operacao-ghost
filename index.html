@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="pt-BR"><head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="theme-color" content="#08120f"><title>OPERAÇÃO GHOST — Drone Warfare</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="theme-color" content="#08120f"><title>OPERAÇÃO GHOST — Drone Warfare</title>
 <style>
 :root{--green:#9dffca;--line:#65d9a477;--panel:#06110ddd;--amber:#ffd47a;--red:#ff6666}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100f;color:#d7ffe8;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;touch-action:none}canvas{display:block}#game{position:fixed;inset:0}#hud{position:fixed;inset:0;pointer-events:none;text-shadow:0 1px 5px #000} .panel{background:linear-gradient(135deg,#06130fe8,#06130f9c);border:1px solid var(--line);padding:10px 12px;backdrop-filter:blur(5px);clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,0 100%)}#brand{position:absolute;top:14px;left:14px;font-weight:bold;letter-spacing:2px;font-size:14px}#brand small{display:block;color:#81bda0;font-size:9px;letter-spacing:1px;margin-top:4px}#stats{position:absolute;top:14px;right:14px;min-width:145px;font-size:11px;line-height:1.8}#mission{position:absolute;top:100px;left:14px;width:min(260px,46vw);font-size:11px;line-height:1.65}#mission strong{color:var(--green);font-size:12px}#objective{color:#ffe29a;margin-top:5px}#reticle{position:absolute;left:50%;top:50%;width:32px;height:32px;transform:translate(-50%,-50%);border:1px solid #9dffca88;border-radius:50%}#reticle:before,#reticle:after{content:"";position:absolute;background:var(--green)}#reticle:before{width:48px;height:1px;left:-9px;top:15px}#reticle:after{height:48px;width:1px;top:-9px;left:15px}#reticle i{position:absolute;width:4px;height:4px;background:var(--green);border-radius:50%;top:13px;left:13px}#bottom{position:absolute;left:50%;bottom:15px;transform:translateX(-50%);display:flex;gap:7px;align-items:end}button{font:inherit;color:#d7ffe8;background:#071710eF;border:1px solid #65d9a4a0;border-radius:5px;padding:10px 12px;cursor:pointer;pointer-events:auto;min-height:39px}button:active,button.active{background:#1b6244;border-color:var(--green)}button:disabled{opacity:.4}#bottom button{font-size:10px}#alert{position:absolute;top:45%;left:50%;transform:translate(-50%,-50%);font-size:13px;color:var(--amber);letter-spacing:2px;text-align:center;max-width:90vw}#mapbox{position:absolute;right:14px;bottom:14px;width:120px;height:120px;padding:5px}#map{width:100%;height:100%;display:block}#hint{position:absolute;bottom:16px;left:14px;font-size:10px;color:#b0d4c0;max-width:220px;line-height:1.6}#overlay{position:fixed;inset:0;background:radial-gradient(ellipse at center,#112c23ed,#030907f5);display:flex;align-items:center;justify-content:center;z-index:5;padding:20px}#card{width:min(560px,100%);max-height:90vh;overflow:auto;border:1px solid #65d9a4a8;background:#06110ff2;padding:clamp(20px,5vw,38px);box-shadow:0 0 70px #1a9b6040}h1{font-size:clamp(28px,7vw,46px);letter-spacing:3px;margin:0;color:#d9ffeb}h1 span{color:var(--green)}.eyebrow{color:var(--green);font-size:10px;letter-spacing:3px;margin-bottom:14px}.desc{color:#b5cfc1;line-height:1.65;font-size:13px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}.primary{background:#b4ffd5;color:#062016;font-weight:bold}.tiny{font-size:10px;color:#8bb29e;line-height:1.6;margin-top:15px}.mobile-controls{display:none;position:fixed;inset:0;pointer-events:none;z-index:3}.stick{position:absolute;bottom:32px;left:24px;width:116px;height:116px;border:1px solid #9dffca80;border-radius:50%;background:#06110f66;pointer-events:auto;touch-action:none}.knob{position:absolute;width:44px;height:44px;border-radius:50%;left:35px;top:35px;background:#9dffca55;border:1px solid var(--green)}#touchLook{position:absolute;right:0;top:20%;height:60%;width:48%;pointer-events:auto;touch-action:none}#touchButtons{position:absolute;right:16px;bottom:30px;display:grid;grid-template-columns:repeat(2,58px);gap:8px;pointer-events:auto}#touchButtons button{height:50px;padding:3px;font-size:10px;background:#06110fdd}#toast{position:absolute;top:76px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--amber);text-align:center;max-width:85vw}body.thermal canvas{filter:sepia(1) hue-rotate(65deg) saturate(2.7) contrast(1.2)}body.night canvas{filter:brightness(.65) hue-rotate(65deg) saturate(.7)}@media(max-width:650px){#brand{font-size:12px;top:9px;left:9px}#stats{top:9px;right:9px;font-size:10px;min-width:120px;padding:6px 8px}#mission{top:78px;left:9px;padding:7px 9px;font-size:10px;width:44vw}#mapbox{width:88px;height:88px;right:8px;bottom:8px}#hint{display:none}#bottom{bottom:9px;gap:4px}#bottom button{font-size:9px;padding:8px 7px;min-height:34px}#reticle{width:25px;height:25px}#reticle:before{left:-8px;top:11px;width:39px}#reticle:after{top:-8px;left:11px;height:39px}#reticle i{top:10px;left:10px}.mobile-controls{display:block}#mission .sub{display:none}}
 </style></head><body><div id="game"></div><div id="hud"><div id="brand" class="panel">OPERAÇÃO GHOST<small>UNIDADE REMOTA // SIMULAÇÃO FICTÍCIA</small></div><div id="stats" class="panel">ALT <b id="alt">45</b> m<br>VEL <b id="speed">0</b> km/h<br>BATERIA <b id="battery">100</b>%<br>SINAL <b id="signal">100</b>%<br>SISTEMA <b id="health">100</b>%</div><div id="mission" class="panel"><strong id="missionName">01 / PRIMEIRO CONTATO</strong><div id="missionText">Explore o setor e localize o ponto de observação.</div><div id="objective">OBJETIVO: 0 / 2</div><div class="sub">PROTOCOLO: identifique antes de agir.</div></div><div id="reticle"><i></i></div><div id="alert"></div><div id="toast"></div><div id="hint">WASD mover · Espaço subir · Shift descer<br>Mouse olhar · Clique disparo fictício · E interagir · Esc pausar</div><div id="bottom"><button id="viewBtn">VISÃO: NORMAL</button><button id="interactBtn">E · INTERAGIR</button><button id="fireBtn">PULSO · 8</button><button id="pauseBtn">Ⅱ PAUSAR</button></div><div id="mapbox" class="panel"><canvas id="map" width="120" height="120"></canvas></div></div>
@@ -64,156 +64,204 @@ if(objectiveCount>=m.required&&drone.position.distanceTo(new THREE.Vector3(0,gro
 init();
 </script>
 <style>
-  /* Força Tela Cheia Real no Celular */
-  html, body {
-    margin: 0 !important;
-    padding: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    min-width: 100vw !important;
-    min-height: 100vh !important;
-    overflow: hidden !important;
-    background: #050b08 !important;
-    touch-action: none !important;
-    user-select: none !important;
-    -webkit-user-select: none !important;
-  }
+/* 1. TELA CHEIA REAL SEM BORDAS PRETAS */
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  overflow: hidden !important;
+  background: #050b08 !important;
+  touch-action: none !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -webkit-touch-callout: none !important;
+}
 
-  /* Remove limites de largura fixos do container e do Canvas */
-  #game-container, #canvas-container, canvas, .game-wrapper, main, body > div:not(#touch-hud-panel) {
-    width: 100vw !important;
-    height: 100vh !important;
-    max-width: none !important;
-    max-height: none !important;
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
+#game-container, #canvas-container, canvas, .game-wrapper, main, body > div:not(#mobile-hud-root) {
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
 
-  /* Ajusta o Modal do Menu para caber no celular */
-  #modal, .modal, #menu, .menu-overlay, div[class*="modal"], div[class*="menu"] {
-    max-width: 90vw !important;
-    max-height: 90vh !important;
-    overflow-y: auto !important;
-    z-index: 2000000 !important;
-  }
+/* 2. ADAPTAÇÃO RESPONSIVA DO MENU DE INÍCIO */
+#modal, .modal, #menu, .menu-overlay, div[class*="modal"], div[class*="menu"], #start-screen, .start-screen {
+  position: fixed !important;
+  z-index: 10000000 !important;
+  max-width: 92vw !important;
+  max-height: 88vh !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  padding: 16px !important;
+  box-sizing: border-box !important;
+  overflow-y: auto !important;
+  background: rgba(5, 18, 12, 0.94) !important;
+  border: 1px solid rgba(0, 255, 150, 0.4) !important;
+  box-shadow: 0 0 25px rgba(0, 255, 150, 0.25) !important;
+  border-radius: 8px !important;
+}
 
-  /* Overlay de Controles Touch */
-  #touch-canvas-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 999999;
-    pointer-events: none;
-  }
+#modal h1, #modal h2, .modal h1, .modal h2 { font-size: clamp(16px, 4vw, 24px) !important; }
+#modal p, .modal p { font-size: clamp(11px, 2.5vw, 14px) !important; line-height: 1.3 !important; }
+#modal button, .modal button, .btn { padding: 10px 18px !important; font-size: clamp(12px, 3vw, 15px) !important; margin: 5px !important; }
 
-  .hud-touch-controls {
-    position: fixed;
-    bottom: 15px;
-    right: 15px;
-    z-index: 1000000;
-    display: flex;
-    gap: 10px;
-    align-items: flex-end;
-  }
+/* 3. INTERFACE TOUCH E BOTÕES TÁTICOS */
+#mobile-hud-root {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999999;
+  pointer-events: none;
+  display: none;
+}
 
-  .hud-btn {
-    background: rgba(8, 24, 18, 0.8);
-    border: 1px solid rgba(0, 255, 150, 0.5);
-    color: #00ff96;
-    font-family: monospace;
-    font-size: 11px;
-    font-weight: bold;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    touch-action: none;
-    backdrop-filter: blur(4px);
-    box-shadow: 0 0 10px rgba(0, 255, 150, 0.2);
-    user-select: none;
-    -webkit-user-select: none;
-  }
+#touch-overlay-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+}
 
-  .hud-btn:active {
-    background: rgba(0, 255, 150, 0.5);
-    color: #fff;
-    transform: scale(0.92);
-  }
+.hud-btn-cluster {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  width: 180px;
+  height: 180px;
+  pointer-events: auto;
+}
 
-  #btn-fogo { width: 60px; height: 60px; border-color: rgba(255, 65, 65, 0.7); color: #ff5555; font-size: 11px; }
-  #btn-subir { width: 48px; height: 48px; }
-  #btn-descer { width: 48px; height: 48px; }
-  #btn-interagir { width: 42px; height: 42px; font-size: 10px; }
+.hud-btn {
+  position: absolute;
+  background: rgba(5, 20, 14, 0.75);
+  border: 1.5px solid rgba(0, 255, 150, 0.5);
+  color: #00ff96;
+  font-family: monospace, sans-serif;
+  font-weight: bold;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 0 10px rgba(0, 255, 150, 0.2);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.hud-btn:active {
+  background: rgba(0, 255, 150, 0.4);
+  color: #ffffff;
+  transform: scale(0.92);
+}
+
+#btn-fogo { right: 0; bottom: 0; width: 65px; height: 65px; border-color: rgba(255, 60, 60, 0.8); color: #ff5555; font-size: 11px; }
+#btn-subir { right: 10px; bottom: 80px; width: 50px; height: 50px; font-size: 16px; }
+#btn-descer { right: 80px; bottom: 10px; width: 50px; height: 50px; font-size: 16px; }
+#btn-interagir { right: 75px; bottom: 75px; width: 44px; height: 44px; font-size: 12px; }
 </style>
 
-<div class="hud-touch-controls" id="touch-hud-panel">
-  <div id="btn-interagir" class="hud-btn">E</div>
-  <div id="btn-descer" class="hud-btn">▼</div>
-  <div id="btn-subir" class="hud-btn">▲</div>
-  <div id="btn-fogo" class="hud-btn">FOGO</div>
+<div id="mobile-hud-root">
+  <canvas id="touch-overlay-canvas"></canvas>
+  <div class="hud-btn-cluster">
+    <div id="btn-interagir" class="hud-btn">E</div>
+    <div id="btn-subir" class="hud-btn">▲</div>
+    <div id="btn-descer" class="hud-btn">▼</div>
+    <div id="btn-fogo" class="hud-btn">FOGO</div>
+  </div>
 </div>
 
 <script>
 (function() {
-  // Redimensiona o canvas quando girar a tela
-  function fixCanvasSize() {
-    const canvas = document.querySelector('canvas');
+  // Ignora chamadas de PointerLock que exibem avisos no navegador
+  Element.prototype.requestPointerLock = function() { return Promise.resolve(); };
+  document.exitPointerLock = function() {};
+
+  // Força o Three.js a aceitar movimentação de câmera por toque
+  function patchPointerLockControls() {
+    if (window.THREE && THREE.PointerLockControls) {
+      const origOnMouseMove = THREE.PointerLockControls.prototype.onMouseMove;
+      THREE.PointerLockControls.prototype.onMouseMove = function(event) {
+        const wasLocked = this.isLocked;
+        this.isLocked = true;
+        origOnMouseMove.call(this, event);
+        this.isLocked = wasLocked;
+      };
+    }
+  }
+  patchPointerLockControls();
+  window.addEventListener('DOMContentLoaded', patchPointerLockControls);
+
+  // Redimensionamento do Canvas
+  function resizeGame() {
+    const canvas = document.querySelector('canvas:not(#touch-overlay-canvas)');
     if (canvas) {
       canvas.style.width = window.innerWidth + 'px';
       canvas.style.height = window.innerHeight + 'px';
-      window.dispatchEvent(new Event('resize'));
     }
+    const hudCanvas = document.getElementById('touch-overlay-canvas');
+    if (hudCanvas) {
+      hudCanvas.width = window.innerWidth;
+      hudCanvas.height = window.innerHeight;
+    }
+    window.dispatchEvent(new Event('resize'));
   }
-  window.addEventListener('resize', fixCanvasSize);
-  window.addEventListener('orientationchange', () => setTimeout(fixCanvasSize, 200));
-  fixCanvasSize();
 
-  const keys = { w: false, a: false, s: false, d: false };
+  window.addEventListener('resize', resizeGame);
+  window.addEventListener('orientationchange', () => setTimeout(resizeGame, 200));
 
-  function setKey(key, code, state) {
-    if (keys[key] === state) return;
-    keys[key] = state;
-    const type = state ? 'keydown' : 'keyup';
-    const ev = new KeyboardEvent(type, { key: key, code: code, bubbles: true });
+  // Ativa os controles ao clicar em "INICIAR MISSÃO"
+  const hudRoot = document.getElementById('mobile-hud-root');
+  document.addEventListener('click', function(e) {
+    const txt = (e.target.innerText || e.target.textContent || '').toUpperCase();
+    if (txt.includes('INICIAR') || txt.includes('START') || e.target.id === 'start-btn') {
+      if (hudRoot) hudRoot.style.display = 'block';
+      resizeGame();
+    }
+  }, true);
+
+  // Áreas Touch (Esquerda = Joystick / Direita = Câmera)
+  const leftZone = document.createElement('div');
+  leftZone.style.cssText = 'position:fixed; top:0; left:0; width:50vw; height:100vh; z-index:999998; touch-action:none;';
+
+  const rightZone = document.createElement('div');
+  rightZone.style.cssText = 'position:fixed; top:0; right:0; width:50vw; height:100vh; z-index:999998; touch-action:none;';
+
+  document.body.appendChild(leftZone);
+  document.body.appendChild(rightZone);
+
+  // Simulação de Teclado (WASD)
+  const activeKeys = { w: false, a: false, s: false, d: false };
+  function setKeyState(key, code, isPressed) {
+    if (activeKeys[key] === isPressed) return;
+    activeKeys[key] = isPressed;
+    const type = isPressed ? 'keydown' : 'keyup';
+    const ev = new KeyboardEvent(type, { key: key, code: code, bubbles: true, cancelable: true });
     window.dispatchEvent(ev);
     document.dispatchEvent(ev);
   }
 
-  // Zonas de toque
-  const areaLeft = document.createElement('div');
-  areaLeft.style.cssText = 'position:fixed; top:0; left:0; width:50vw; height:100vh; z-index:999998; touch-action:none;';
-  
-  const areaRight = document.createElement('div');
-  areaRight.style.cssText = 'position:fixed; top:0; right:0; width:50vw; height:100vh; z-index:999998; touch-action:none;';
-
-  document.body.appendChild(areaLeft);
-  document.body.appendChild(areaRight);
-
-  // Overlay Canvas do Joystick
-  const canvas = document.createElement('canvas');
-  canvas.id = 'touch-canvas-overlay';
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  document.body.appendChild(canvas);
-  const ctx = canvas.getContext('2d');
-
-  window.addEventListener('resize', () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  });
-
-  // Joystick Analógico
+  // Joystick Analógico Dinâmico (Lado Esquerdo)
+  const hudCanvas = document.getElementById('touch-overlay-canvas');
+  const ctx = hudCanvas ? hudCanvas.getContext('2d') : null;
   let joyTouchId = null;
   let joyBase = { x: 0, y: 0 };
   let joyStick = { x: 0, y: 0 };
   const maxRadius = 45;
 
-  areaLeft.addEventListener('touchstart', (e) => {
+  leftZone.addEventListener('touchstart', (e) => {
     if (joyTouchId !== null) return;
     const touch = e.changedTouches[0];
     joyTouchId = touch.identifier;
@@ -222,7 +270,7 @@ init();
     drawJoystick();
   }, { passive: false });
 
-  areaLeft.addEventListener('touchmove', (e) => {
+  leftZone.addEventListener('touchmove', (e) => {
     for (let i = 0; i < e.changedTouches.length; i++) {
       if (e.changedTouches[i].identifier === joyTouchId) {
         const touch = e.changedTouches[i];
@@ -237,10 +285,10 @@ init();
 
         joyStick = { x: joyBase.x + dx, y: joyBase.y + dy };
 
-        setKey('w', 'KeyW', dy < -12);
-        setKey('s', 'KeyS', dy > 12);
-        setKey('a', 'KeyA', dx < -12);
-        setKey('d', 'KeyD', dx > 12);
+        setKeyState('w', 'KeyW', dy < -12);
+        setKeyState('s', 'KeyS', dy > 12);
+        setKeyState('a', 'KeyA', dx < -12);
+        setKeyState('d', 'KeyD', dx > 12);
 
         drawJoystick();
         break;
@@ -248,46 +296,46 @@ init();
     }
   }, { passive: false });
 
-  const resetJoy = (e) => {
+  const releaseJoystick = (e) => {
     for (let i = 0; i < e.changedTouches.length; i++) {
       if (e.changedTouches[i].identifier === joyTouchId) {
         joyTouchId = null;
-        setKey('w', 'KeyW', false);
-        setKey('s', 'KeyS', false);
-        setKey('a', 'KeyA', false);
-        setKey('d', 'KeyD', false);
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        setKeyState('w', 'KeyW', false);
+        setKeyState('s', 'KeyS', false);
+        setKeyState('a', 'KeyA', false);
+        setKeyState('d', 'KeyD', false);
+        if (ctx) ctx.clearRect(0, 0, hudCanvas.width, hudCanvas.height);
         break;
       }
     }
   };
 
-  areaLeft.addEventListener('touchend', resetJoy);
-  areaLeft.addEventListener('touchcancel', resetJoy);
+  leftZone.addEventListener('touchend', releaseJoystick);
+  leftZone.addEventListener('touchcancel', releaseJoystick);
 
   function drawJoystick() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if (joyTouchId === null) return;
+    if (!ctx || joyTouchId === null) return;
+    ctx.clearRect(0, 0, hudCanvas.width, hudCanvas.height);
 
     ctx.beginPath();
     ctx.arc(joyBase.x, joyBase.y, maxRadius, 0, Math.PI * 2);
     ctx.fillStyle = 'rgba(0, 255, 150, 0.08)';
     ctx.strokeStyle = 'rgba(0, 255, 150, 0.4)';
-    ctx.lineWidth = 1.5;
+    ctx.lineWidth = 2;
     ctx.fill();
     ctx.stroke();
 
     ctx.beginPath();
-    ctx.arc(joyStick.x, joyStick.y, 20, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(0, 255, 150, 0.6)';
+    ctx.arc(joyStick.x, joyStick.y, 22, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(0, 255, 150, 0.65)';
     ctx.fill();
   }
 
-  // Controle de Câmera (Lado Direito)
+  // Rotação da Câmera (Lado Direito)
   let camTouchId = null;
   let lastCamX = 0, lastCamY = 0;
 
-  areaRight.addEventListener('touchstart', (e) => {
+  rightZone.addEventListener('touchstart', (e) => {
     if (camTouchId !== null) return;
     const touch = e.changedTouches[0];
     camTouchId = touch.identifier;
@@ -295,18 +343,18 @@ init();
     lastCamY = touch.clientY;
   }, { passive: false });
 
-  areaRight.addEventListener('touchmove', (e) => {
+  rightZone.addEventListener('touchmove', (e) => {
     for (let i = 0; i < e.changedTouches.length; i++) {
       if (e.changedTouches[i].identifier === camTouchId) {
         const touch = e.changedTouches[i];
-        const movementX = (touch.clientX - lastCamX) * 1.8;
-        const movementY = (touch.clientY - lastCamY) * 1.8;
+        const deltaX = (touch.clientX - lastCamX) * 2.2;
+        const deltaY = (touch.clientY - lastCamY) * 2.2;
         lastCamX = touch.clientX;
         lastCamY = touch.clientY;
 
         window.dispatchEvent(new MouseEvent('mousemove', {
-          movementX: movementX,
-          movementY: movementY,
+          movementX: deltaX,
+          movementY: deltaY,
           clientX: touch.clientX,
           clientY: touch.clientY,
           bubbles: true
@@ -316,7 +364,7 @@ init();
     }
   }, { passive: false });
 
-  const resetCam = (e) => {
+  const releaseCamera = (e) => {
     for (let i = 0; i < e.changedTouches.length; i++) {
       if (e.changedTouches[i].identifier === camTouchId) {
         camTouchId = null;
@@ -325,28 +373,28 @@ init();
     }
   };
 
-  areaRight.addEventListener('touchend', resetCam);
-  areaRight.addEventListener('touchcancel', resetCam);
+  rightZone.addEventListener('touchend', releaseCamera);
+  rightZone.addEventListener('touchcancel', releaseCamera);
 
-  // Mapeamento dos Botões
-  function bindBtn(id, key, code) {
+  // Mapeamento dos Botões de Ação
+  function bindTouchBtn(id, key, code) {
     const btn = document.getElementById(id);
     if (!btn) return;
-    btn.addEventListener('touchstart', (e) => { e.preventDefault(); setKey(key, code, true); });
-    btn.addEventListener('touchend', (e) => { e.preventDefault(); setKey(key, code, false); });
+    btn.addEventListener('touchstart', (e) => { e.preventDefault(); setKeyState(key, code, true); });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); setKeyState(key, code, false); });
   }
 
-  bindBtn('btn-subir', ' ', 'Space');
-  bindBtn('btn-descer', 'Shift', 'ShiftLeft');
-  bindBtn('btn-interagir', 'e', 'KeyE');
+  bindTouchBtn('btn-subir', ' ', 'Space');
+  bindTouchBtn('btn-descer', 'Shift', 'ShiftLeft');
+  bindTouchBtn('btn-interagir', 'e', 'KeyE');
 
-  const btnFogo = document.getElementById('btn-fogo');
-  if (btnFogo) {
-    btnFogo.addEventListener('touchstart', (e) => {
+  const fireBtn = document.getElementById('btn-fogo');
+  if (fireBtn) {
+    fireBtn.addEventListener('touchstart', (e) => {
       e.preventDefault();
       window.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, button: 0 }));
     });
-    btnFogo.addEventListener('touchend', (e) => {
+    fireBtn.addEventListener('touchend', (e) => {
       e.preventDefault();
       window.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, button: 0 }));
     });
