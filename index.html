@@ -3,7 +3,47 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="theme-color" content="#08120f"><title>OPERAÇÃO GHOST — Drone Warfare</title>
 <style>
 :root{--green:#9dffca;--line:#65d9a477;--panel:#06110ddd;--amber:#ffd47a;--red:#ff6666}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100f;color:#d7ffe8;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;touch-action:none}canvas{display:block}#game{position:fixed;inset:0}#hud{position:fixed;inset:0;pointer-events:none;text-shadow:0 1px 5px #000} .panel{background:linear-gradient(135deg,#06130fe8,#06130f9c);border:1px solid var(--line);padding:10px 12px;backdrop-filter:blur(5px);clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,0 100%)}#brand{position:absolute;top:14px;left:14px;font-weight:bold;letter-spacing:2px;font-size:14px}#brand small{display:block;color:#81bda0;font-size:9px;letter-spacing:1px;margin-top:4px}#stats{position:absolute;top:14px;right:14px;min-width:145px;font-size:11px;line-height:1.8}#mission{position:absolute;top:100px;left:14px;width:min(260px,46vw);font-size:11px;line-height:1.65}#mission strong{color:var(--green);font-size:12px}#objective{color:#ffe29a;margin-top:5px}#reticle{position:absolute;left:50%;top:50%;width:32px;height:32px;transform:translate(-50%,-50%);border:1px solid #9dffca88;border-radius:50%}#reticle:before,#reticle:after{content:"";position:absolute;background:var(--green)}#reticle:before{width:48px;height:1px;left:-9px;top:15px}#reticle:after{height:48px;width:1px;top:-9px;left:15px}#reticle i{position:absolute;width:4px;height:4px;background:var(--green);border-radius:50%;top:13px;left:13px}#bottom{position:absolute;left:50%;bottom:15px;transform:translateX(-50%);display:flex;gap:7px;align-items:end}button{font:inherit;color:#d7ffe8;background:#071710eF;border:1px solid #65d9a4a0;border-radius:5px;padding:10px 12px;cursor:pointer;pointer-events:auto;min-height:39px}button:active,button.active{background:#1b6244;border-color:var(--green)}button:disabled{opacity:.4}#bottom button{font-size:10px}#alert{position:absolute;top:45%;left:50%;transform:translate(-50%,-50%);font-size:13px;color:var(--amber);letter-spacing:2px;text-align:center;max-width:90vw}#mapbox{position:absolute;right:14px;bottom:14px;width:120px;height:120px;padding:5px}#map{width:100%;height:100%;display:block}#hint{position:absolute;bottom:16px;left:14px;font-size:10px;color:#b0d4c0;max-width:220px;line-height:1.6}#overlay{position:fixed;inset:0;background:radial-gradient(ellipse at center,#112c23ed,#030907f5);display:flex;align-items:center;justify-content:center;z-index:5;padding:20px}#card{width:min(560px,100%);max-height:90vh;overflow:auto;border:1px solid #65d9a4a8;background:#06110ff2;padding:clamp(20px,5vw,38px);box-shadow:0 0 70px #1a9b6040}h1{font-size:clamp(28px,7vw,46px);letter-spacing:3px;margin:0;color:#d9ffeb}h1 span{color:var(--green)}.eyebrow{color:var(--green);font-size:10px;letter-spacing:3px;margin-bottom:14px}.desc{color:#b5cfc1;line-height:1.65;font-size:13px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}.primary{background:#b4ffd5;color:#062016;font-weight:bold}.tiny{font-size:10px;color:#8bb29e;line-height:1.6;margin-top:15px}.mobile-controls{display:none;position:fixed;inset:0;pointer-events:none;z-index:3}.stick{position:absolute;bottom:32px;left:24px;width:116px;height:116px;border:1px solid #9dffca80;border-radius:50%;background:#06110f66;pointer-events:auto;touch-action:none}.knob{position:absolute;width:44px;height:44px;border-radius:50%;left:35px;top:35px;background:#9dffca55;border:1px solid var(--green)}#touchLook{position:absolute;right:0;top:20%;height:60%;width:48%;pointer-events:auto;touch-action:none}#touchButtons{position:absolute;right:16px;bottom:30px;display:grid;grid-template-columns:repeat(2,58px);gap:8px;pointer-events:auto}#touchButtons button{height:50px;padding:3px;font-size:10px;background:#06110fdd}#toast{position:absolute;top:76px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--amber);text-align:center;max-width:85vw}body.thermal canvas{filter:sepia(1) hue-rotate(65deg) saturate(2.7) contrast(1.2)}body.night canvas{filter:brightness(.65) hue-rotate(65deg) saturate(.7)}@media(max-width:650px){#brand{font-size:12px;top:9px;left:9px}#stats{top:9px;right:9px;font-size:10px;min-width:120px;padding:6px 8px}#mission{top:78px;left:9px;padding:7px 9px;font-size:10px;width:44vw}#mapbox{width:88px;height:88px;right:8px;bottom:8px}#hint{display:none}#bottom{bottom:9px;gap:4px}#bottom button{font-size:9px;padding:8px 7px;min-height:34px}#reticle{width:25px;height:25px}#reticle:before{left:-8px;top:11px;width:39px}#reticle:after{top:-8px;left:11px;height:39px}#reticle i{top:10px;left:10px}.mobile-controls{display:block}#mission .sub{display:none}}
-</style></head><body><div id="game"></div><div id="hud"><div id="brand" class="panel">OPERAÇÃO GHOST<small>UNIDADE REMOTA // SIMULAÇÃO FICTÍCIA</small></div><div id="stats" class="panel">ALT <b id="alt">45</b> m<br>VEL <b id="speed">0</b> km/h<br>BATERIA <b id="battery">100</b>%<br>SINAL <b id="signal">100</b>%<br>SISTEMA <b id="health">100</b>%</div><div id="mission" class="panel"><strong id="missionName">01 / PRIMEIRO CONTATO</strong><div id="missionText">Explore o setor e localize o ponto de observação.</div><div id="objective">OBJETIVO: 0 / 2</div><div class="sub">PROTOCOLO: identifique antes de agir.</div></div><div id="reticle"><i></i></div><div id="alert"></div><div id="toast"></div><div id="hint">WASD mover · Espaço subir · Shift descer<br>Mouse olhar · Clique disparo fictício · E interagir · Esc pausar</div><div id="bottom"><button id="viewBtn">VISÃO: NORMAL</button><button id="interactBtn">E · INTERAGIR</button><button id="fireBtn">PULSO · 8</button><button id="pauseBtn">Ⅱ PAUSAR</button></div><div id="mapbox" class="panel"><canvas id="map" width="120" height="120"></canvas></div></div>
+</style>
+<style>
+  /* Ajuste de emergência para telas horizontais baixas (Celulares em Landscape) */
+  @media screen and (max-height: 500px) {
+    #modal, .modal, #instructions-modal, #start-modal, div[class*="modal"], div[id*="modal"] {
+      position: fixed !important;
+      top: 50% !important;
+      left: 50% !important;
+      transform: translate(-50%, -50%) !important;
+      width: 90vw !important;
+      max-width: 580px !important;
+      max-height: 94vh !important;
+      padding: 10px 16px !important;
+      margin: 0 !important;
+      box-sizing: border-box !important;
+      overflow-y: auto !important;
+      -webkit-overflow-scrolling: touch !important;
+    }
+
+    #modal h1, .modal h1, #modal h2, .modal h2 {
+      font-size: 15px !important;
+      margin: 2px 0 4px 0 !important;
+    }
+
+    #modal p, .modal p, #modal div, .modal div {
+      font-size: 11px !important;
+      line-height: 1.25 !important;
+      margin: 3px 0 !important;
+    }
+
+    /* Garante que a área dos botões fique visível */
+    #modal button, .modal button, .btn, #start-btn, button {
+      padding: 6px 16px !important;
+      font-size: 12px !important;
+      margin: 6px 4px 2px 4px !important;
+      display: inline-block !important;
+    }
+  }
+</style>
+
+</head><body><div id="game"></div><div id="hud"><div id="brand" class="panel">OPERAÇÃO GHOST<small>UNIDADE REMOTA // SIMULAÇÃO FICTÍCIA</small></div><div id="stats" class="panel">ALT <b id="alt">45</b> m<br>VEL <b id="speed">0</b> km/h<br>BATERIA <b id="battery">100</b>%<br>SINAL <b id="signal">100</b>%<br>SISTEMA <b id="health">100</b>%</div><div id="mission" class="panel"><strong id="missionName">01 / PRIMEIRO CONTATO</strong><div id="missionText">Explore o setor e localize o ponto de observação.</div><div id="objective">OBJETIVO: 0 / 2</div><div class="sub">PROTOCOLO: identifique antes de agir.</div></div><div id="reticle"><i></i></div><div id="alert"></div><div id="toast"></div><div id="hint">WASD mover · Espaço subir · Shift descer<br>Mouse olhar · Clique disparo fictício · E interagir · Esc pausar</div><div id="bottom"><button id="viewBtn">VISÃO: NORMAL</button><button id="interactBtn">E · INTERAGIR</button><button id="fireBtn">PULSO · 8</button><button id="pauseBtn">Ⅱ PAUSAR</button></div><div id="mapbox" class="panel"><canvas id="map" width="120" height="120"></canvas></div></div>
 <div class="mobile-controls" id="mobile"><div class="stick" id="stick"><div class="knob" id="knob"></div></div><div id="touchLook"></div><div id="touchButtons"><button id="upBtn">▲ SUBIR</button><button id="downBtn">▼ DESCER</button><button id="touchFire">PULSO</button><button id="touchInteract">AÇÃO</button></div></div>
 <div id="overlay"><div id="card"><div class="eyebrow">CENTRO DE OPERAÇÕES // CANAL SEGURO</div><h1>OPERAÇÃO <span>GHOST</span></h1><p class="desc">Você controla um drone de reconhecimento em uma zona de conflito inteiramente fictícia. Explore, identifique ameaças, proteja unidades aliadas e retorne à base. O jogo prioriza observação, navegação e decisões responsáveis.</p><p class="desc"><b>MISSÃO 01 — PRIMEIRO CONTATO</b><br>Marque dois pontos de interesse e retorne ao círculo da base. Use o pulso de energia fictício apenas contra drones hostis identificados.</p><div class="actions"><button class="primary" id="startBtn">INICIAR MISSÃO</button><button id="howBtn">COMO JOGAR</button></div><div class="tiny" id="menuNote">Carregando ambiente 3D…</div></div></div>
 <script type="module">
