@@ -14,7 +14,7 @@ class Game {
     
     this.scene = new THREE.Scene();
 
-    this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 350);
+    this.camera = new THREE.PerspectiveCamera(62, window.innerWidth / window.innerHeight, 0.1, 380);
 
     this.targetCamera = new THREE.OrthographicCamera(-15, 15, 15, -15, 0.1, 100);
     this.targetCamera.rotation.x = -Math.PI / 2;
@@ -89,7 +89,7 @@ class Game {
 
   getTargetImpactPosition() {
     const fwd = this.player.getForwardDirection();
-    const impact = this.player.position.clone().add(fwd.multiplyScalar(this.player.position.y * 0.8));
+    const impact = this.player.position.clone().add(fwd.multiplyScalar(this.player.position.y * 0.85));
     impact.y = 0.05;
     return impact;
   }
@@ -101,7 +101,6 @@ class Game {
   }
 
   updateCompass() {
-    // Converte rotação da câmera em graus de bússola
     const deg = Math.round(((-this.camera.rotation.y * 180 / Math.PI) % 360 + 360) % 360);
     const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
     const idx = Math.round(deg / 45) % 8;
@@ -119,6 +118,7 @@ class Game {
     const delta = this.clock.getDelta();
 
     this.player.update(delta, this.joysticks.input);
+    this.scenario.update(delta);
 
     const targetPos = this.getTargetImpactPosition();
     this.targetMarker.position.copy(targetPos);
@@ -135,14 +135,12 @@ class Game {
 
     if (this.recentExplosions.length > 5) this.recentExplosions.shift();
 
-    // Atualização da Telemetria FPV Realista
     const rangeInfo = this.player.getRangeStatus();
-    const speed = Math.round((Math.abs(this.joysticks.input.rightY) + Math.abs(this.joysticks.input.rightX)) * 42);
+    const speed = Math.round((Math.abs(this.joysticks.input.rightY) + Math.abs(this.joysticks.input.rightX)) * 48);
 
     document.getElementById('tele-spd').innerText = speed;
     document.getElementById('tele-alt').innerText = Math.round(this.player.position.y);
     document.getElementById('tele-range').innerText = `${rangeInfo.km}`;
-    document.getElementById('tele-targets').innerText = `${this.soldierManager.getAliveCount()} ALVOS`;
 
     this.updateCompass();
 
@@ -153,10 +151,10 @@ class Game {
     this.renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
     this.renderer.render(this.scene, this.camera);
 
-    const pipW = 150;
-    const pipH = 110;
+    const pipW = 145;
+    const pipH = 105;
     const pipX = window.innerWidth - pipW - 10;
-    const pipY = window.innerHeight - pipH - 58;
+    const pipY = window.innerHeight - pipH - 54;
 
     this.renderer.setScissorTest(true);
     this.renderer.setViewport(pipX, pipY, pipW, pipH);
