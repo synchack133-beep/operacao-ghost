@@ -9,7 +9,6 @@
     html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; background-color: #050805; font-family: 'Courier New', monospace; color: #ffffff; }
     #canvas-container { width: 100%; height: 100%; position: absolute; top:0; left:0; z-index: 1; }
 
-    /* FILTRO DE RUÍDO E LENS VIGNETTE ANALÓGICO */
     #lens-overlay {
       position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none;
       background: radial-gradient(circle, rgba(0,0,0,0) 50%, rgba(10,15,10,0.5) 80%, rgba(0,0,0,0.92) 100%);
@@ -18,11 +17,9 @@
     #scanlines {
       position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 6; pointer-events: none;
       background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
-      background-size: 100% 4px;
-      opacity: 0.7;
+      background-size: 100% 4px; opacity: 0.7;
     }
 
-    /* BÚSSOLA TÁTICA */
     #compass-container {
       position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
       width: 280px; height: 26px; background: rgba(0, 0, 0, 0.6);
@@ -32,13 +29,11 @@
     }
     #compass-indicator { position: absolute; top: -1px; color: #ff3c3c; font-weight: bold; font-size: 11px; }
 
-    /* MIRA FPV MILITAR COM PITCH LADDER */
     #reticle-overlay {
       position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 8; pointer-events: none;
       display: flex; justify-content: center; align-items: center;
     }
 
-    /* TELEMETRIA OSD COMPLETA DA TRANSMISSÃO */
     .telemetry-left {
       position: absolute; top: 50px; left: 15px; z-index: 10; pointer-events: none;
       font-size: 10px; line-height: 1.6; text-shadow: 1px 1px 2px #000; color: #e2e8f0;
@@ -56,13 +51,12 @@
     #pip-container { position: absolute; top: 54px; right: 10px; width: 145px; height: 105px; border: 1px solid rgba(0, 255, 150, 0.6); background: rgba(0, 10, 5, 0.9); z-index: 20; pointer-events: none; }
     #pip-title { position: absolute; top: -15px; left: 0; width: 100%; font-size: 8px; font-weight: bold; color: #00ff96; text-align: center; }
 
-    /* CONTROLES TOUCH */
-    .joystick-zone { position: absolute; bottom: 15px; width: 110px; height: 110px; border-radius: 50%; background: rgba(255, 255, 255, 0.04); border: 1px dashed rgba(255, 255, 255, 0.2); pointer-events: auto; z-index: 25; }
+    .joystick-zone { position: absolute; bottom: 15px; width: 110px; height: 110px; border-radius: 50%; background: rgba(255, 255, 255, 0.08); border: 1px dashed rgba(255, 255, 255, 0.3); pointer-events: auto; z-index: 25; }
     #zone-left { left: 15px; }
     #zone-right { right: 15px; }
-    .joystick-stick { width: 40px; height: 40px; border-radius: 50%; background: rgba(255, 255, 255, 0.3); border: 1px solid #fff; position: absolute; top: 35px; left: 35px; pointer-events: none; }
+    .joystick-stick { width: 40px; height: 40px; border-radius: 50%; background: rgba(255, 255, 255, 0.4); border: 1px solid #fff; position: absolute; top: 35px; left: 35px; pointer-events: none; }
 
-    #btn-drop-missile { position: absolute; bottom: 135px; right: 20px; width: 66px; height: 66px; border-radius: 50%; background: rgba(255, 60, 60, 0.45); border: 2px solid #ff3c3c; color: #fff; font-size: 22px; display: flex; justify-content: center; align-items: center; pointer-events: auto; z-index: 30; font-weight: bold; text-shadow: 0 0 5px #000; }
+    #btn-drop-missile { position: absolute; bottom: 135px; right: 20px; width: 66px; height: 66px; border-radius: 50%; background: rgba(255, 60, 60, 0.55); border: 2px solid #ff3c3c; color: #fff; font-size: 22px; display: flex; justify-content: center; align-items: center; pointer-events: auto; z-index: 30; font-weight: bold; }
     #btn-drop-missile:active { background: rgba(255, 60, 60, 0.85); transform: scale(0.92); }
 
     .modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(8, 12, 10, 0.96); z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
@@ -81,20 +75,14 @@
   <div id="lens-overlay"></div>
   <div id="scanlines"></div>
 
-  <!-- RETÍCULO FPV MILITAR AUTÊNTICO -->
   <div id="reticle-overlay">
     <svg width="100%" height="100%" viewBox="0 0 800 450" preserveAspectRatio="none">
-      <!-- Brackets de Curvatura da Câmera -->
       <path d="M 270 140 Q 240 225 270 310" stroke="rgba(255,255,255,0.35)" stroke-width="1.5" fill="none"/>
       <path d="M 530 140 Q 560 225 530 310" stroke="rgba(255,255,255,0.35)" stroke-width="1.5" fill="none"/>
-      
-      <!-- Escala de Inclinamento (Pitch Ladder) -->
       <line x1="360" y1="185" x2="385" y2="185" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
       <line x1="415" y1="185" x2="440" y2="185" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
       <line x1="360" y1="265" x2="385" y2="265" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
       <line x1="415" y1="265" x2="440" y2="265" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
-
-      <!-- Centro de Mira -->
       <circle cx="400" cy="225" r="3" fill="#ff3c3c"/>
       <circle cx="400" cy="225" r="12" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
     </svg>
@@ -104,10 +92,9 @@
 
   <div id="compass-container">
     <span id="compass-indicator">▼</span>
-    <div id="compass-text">NW . . N . . NE . . E</div>
+    <div id="compass-text">0° [ N ]</div>
   </div>
 
-  <!-- OSD ESQUERDA -->
   <div class="telemetry-left">
     <div><b>BAT:</b> 22.2V (4S)</div>
     <div><b>RSSI:</b> -65 dBm</div>
@@ -115,11 +102,10 @@
     <div><b>MODE:</b> ANGLE</div>
   </div>
 
-  <!-- OSD DIREITA -->
   <div class="telemetry-right">
     <div><b>SPD:</b> <span id="tele-spd">0</span> km/h</div>
     <div><b>ALT:</b> <span id="tele-alt">12</span> m</div>
-    <div><b>DIST:</b> <span id="tele-range">0.10</span> / 3.00 km</div>
+    <div><b>DIST:</b> <span id="tele-range">0.00</span> / 3.00 km</div>
     <div><b>COORD:</b> 48.432°N 37.811°E</div>
   </div>
 
@@ -133,13 +119,12 @@
   <button id="btn-drop-missile">🚀</button>
 
   <div id="modal-start" class="modal">
-    <h2 style="color:#ff3c3c; margin-bottom: 5px;">ZONA DE GUERRA — FPV KAMIKAZE</h2>
+    <h2 style="color:#ff3c3c; margin-bottom: 8px;">ZONA DE GUERRA — FPV KAMIKAZE</h2>
     <p style="font-size: 13px; line-height: 1.5; max-width: 480px; color: #a3b8a3;">
-    🌲 <b>Cenário de Batalha:</b> Linhas de trincheiras em ziguezague, floresta destruída por artilharia e fumaça de combate.<br><br>
-    📡 <b>Operador e Tubo:</b> Protegidos no abrigo de retaguarda.<br><br>
-    🕹️ <b>Pilote com os dois analógicos e destrua os alvos inimigos!</b>
+    🌲 <b>Cenário de Batalha:</b> Trincheiras em ziguezague, crateras de bomba e floresta de combate.<br><br>
+    🕹️ <b>Controles Touch:</b> Utilize os dois analógicos nas pontas da tela para pilotar e o botão 🚀 para lançar ataques.
     </p>
-    <button id="btn-start" class="btn-main">ENTRAR NA ZONA DE COMBATE</button>
+    <button id="btn-start" class="btn-main">INICIAR MISSÃO</button>
   </div>
 
   <script type="module" src="./src/main.js"></script>

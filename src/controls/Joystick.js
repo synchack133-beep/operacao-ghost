@@ -1,124 +1,69 @@
 export class JoystickController {
-  constructor(options) {
-    this.leftZone = document.getElementById(options.leftZoneId);
-    this.rightZone = document.getElementById(options.rightZoneId);
-    this.leftStick = document.getElementById(options.leftStickId);
-    this.rightStick = document.getElementById(options.rightStickId);
+  constructor(options = {}) {
+    this.input = { leftX: 0, leftY: 0, rightX: 0, rightY: 0 };
+    this.setup(options);
+  }
 
-    this.leftTouchId = null;
-    this.rightTouchId = null;
+  setup(options) {
+    const leftZone = document.getElementById(options.leftZoneId || 'zone-left');
+    const rightZone = document.getElementById(options.rightZoneId || 'zone-right');
+    const leftStick = document.getElementById(options.leftStickId || 'stick-left');
+    const rightStick = document.getElementById(options.rightStickId || 'stick-right');
 
-    this.leftOrigin = { x: 0, y: 0 };
-    this.rightOrigin = { x: 0, y: 0 };
+    const handleTouch = (zone, stick, isLeft, e) => {
+      if (!zone || !stick || !e.touches || e.touches.length === 0) return;
+      const rect = zone.getBoundingClientRect();
+      const touch = e.touches[0];
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const maxRadius = rect.width / 2;
 
-    this.input = {
-      throttle: 0, // Y esquerdo (-1 a 1)
-      yaw: 0,      // X esquerdo (-1 a 1)
-      pitch: 0,    // Y direito (-1 a 1)
-      roll: 0      // X direito (-1 a 1)
+      let dx = touch.clientX - centerX;
+      let dy = touch.clientY - centerY;
+      const dist = Math.hypot(dx, dy);
+
+      if (dist > maxRadius) {
+        dx = (dx / dist) * maxRadius;
+        dy = (dy / dist) * maxRadius;
+      }
+
+      stick.style.transform = `translate(${dx}px, ${dy}px)`;
+
+      const normX = dx / maxRadius;
+      const normY = dy / maxRadius;
+
+      if (isLeft) {
+        this.input.leftX = normX;
+        this.input.leftY = normY;
+      } else {
+        this.input.rightX = normX;
+        this.input.rightY = normY;
+      }
     };
 
-    this.maxRadius = 42; // Limite do analógico
-    this.init();
-  }
-
-  init() {
-    window.addEventListener('touchstart', (e) => this.onTouchStart(e), { passive: false });
-    window.addEventListener('touchmove', (e) => this.onTouchMove(e), { passive: false });
-    window.addEventListener('touchend', (e) => this.onTouchEnd(e), { passive: false });
-    window.addEventListener('touchcancel', (e) => this.onTouchEnd(e), { passive: false });
-  }
-
-  onTouchStart(e) {
-    for (let i = 0; i < e.changedTouches.length; i++) {
-      const touch = e.changedTouches[i];
-      const target = document.elementFromPoint(touch.clientX, touch.clientY);
-      
-      if (target && target.closest('#btn-shoot, #btn-fullscreen, #btn-nightvision, .btn-main')) {
-        continue; // Permite o disparo sem travar o analógico
+    const resetStick = (stick, isLeft) => {
+      if (stick) stick.style.transform = 'translate(0px, 0px)';
+      if (isLeft) {
+        this.input.leftX = 0;
+        this.input.leftY = 0;
+      } else {
+        this.input.rightX = 0;
+        this.input.rightY = 0;
       }
+    };
 
-      const rectLeft = this.leftZone.getBoundingClientRect();
-      const rectRight = this.rightZone.getBoundingClientRect();
-
-      // Analógico Esquerdo (Subir/Descer + Girar)
-      if (this.leftTouchId === null && 
-          touch.clientX >= rectLeft.left && touch.clientX <= rectLeft.right &&
-          touch.clientY >= rectLeft.top && touch.clientY <= rectLeft.bottom) {
-        this.leftTouchId = touch.identifier;
-        this.leftOrigin = { x: rectLeft.left + rectLeft.width / 2, y: rectLeft.top + rectLeft.height / 2 };
-        this.updateLeft(touch.clientX, touch.clientY);
-        e.preventDefault();
-      }
-      // Analógico Direito (Avançar/Recuar + Esquerda/Direita)
-      else if (this.rightTouchId === null && 
-               touch.clientX >= rectRight.left && touch.clientX <= rectRight.right &&
-               touch.clientY >= rectRight.top && touch.clientY <= rectRight.bottom) {
-        this.rightTouchId = touch.identifier;
-        this.rightOrigin = { x: rectRight.left + rectRight.width / 2, y: rectRight.top + rectRight.height / 2 };
-        this.updateRight(touch.clientX, touch.clientY);
-        e.preventDefault();
-      }
-    }
-  }
-
-  onTouchMove(e) {
-    for (let i = 0; i < e.changedTouches.length; i++) {
-      const touch = e.changedTouches[i];
-      if (touch.identifier === this.leftTouchId) {
-        this.updateLeft(touch.clientX, touch.clientY);
-        e.preventDefault();
-      } else if (touch.identifier === this.rightTouchId) {
-        this.updateRight(touch.clientX, touch.clientY);
-        e.preventDefault();
-      }
-    }
-  }
-
-  onTouchEnd(e) {
-    for (let i = 0; i < e.changedTouches.length; i++) {
-      const touch = e.changedTouches[i];
-      if (touch.identifier === this.leftTouchId) {
-        this.leftTouchId = null;
-        this.input.throttle = 0;
-        this.input.yaw = 0;
-        this.leftStick.style.transform = `translate(0px, 0px)`;
-      } else if (touch.identifier === this.rightTouchId) {
-        this.rightTouchId = null;
-        this.input.pitch = 0;
-        this.input.roll = 0;
-        this.rightStick.style.transform = `translate(0px, 0px)`;
-      }
-    }
-  }
-
-  updateLeft(x, y) {
-    let dx = x - this.leftOrigin.x;
-    let dy = y - this.leftOrigin.y;
-    let dist = Math.hypot(dx, dy);
-
-    if (dist > this.maxRadius) {
-      dx = (dx / dist) * this.maxRadius;
-      dy = (dy / dist) * this.maxRadius;
+    if (leftZone) {
+      leftZone.addEventListener('touchstart', (e) => handleTouch(leftZone, leftStick, true, e), { passive: true });
+      leftZone.addEventListener('touchmove', (e) => handleTouch(leftZone, leftStick, true, e), { passive: true });
+      leftZone.addEventListener('touchend', () => resetStick(leftStick, true));
+      leftZone.addEventListener('touchcancel', () => resetStick(leftStick, true));
     }
 
-    this.leftStick.style.transform = `translate(${dx}px, ${dy}px)`;
-    this.input.yaw = dx / this.maxRadius;
-    this.input.throttle = -dy / this.maxRadius; // Empurrar para cima = subir
-  }
-
-  updateRight(x, y) {
-    let dx = x - this.rightOrigin.x;
-    let dy = y - this.rightOrigin.y;
-    let dist = Math.hypot(dx, dy);
-
-    if (dist > this.maxRadius) {
-      dx = (dx / dist) * this.maxRadius;
-      dy = (dy / dist) * this.maxRadius;
+    if (rightZone) {
+      rightZone.addEventListener('touchstart', (e) => handleTouch(rightZone, rightStick, false, e), { passive: true });
+      rightZone.addEventListener('touchmove', (e) => handleTouch(rightZone, rightStick, false, e), { passive: true });
+      rightZone.addEventListener('touchend', () => resetStick(rightStick, false));
+      rightZone.addEventListener('touchcancel', () => resetStick(rightStick, false));
     }
-
-    this.rightStick.style.transform = `translate(${dx}px, ${dy}px)`;
-    this.input.roll = dx / this.maxRadius;
-    this.input.pitch = -dy / this.maxRadius; // Empurrar para cima = frente
   }
 }

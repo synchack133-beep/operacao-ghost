@@ -32,24 +32,14 @@ export class Player {
     return fwd.normalize();
   }
 
-  // Sanitiza leituras para garantir que nunca sejam NaN ou undefined
   getInputs(input) {
     let lx = 0, ly = 0, rx = 0, ry = 0;
-
     if (input) {
       if (typeof input.leftX === 'number') lx = input.leftX;
-      else if (input.left && typeof input.left.x === 'number') lx = input.left.x;
-
       if (typeof input.leftY === 'number') ly = input.leftY;
-      else if (input.left && typeof input.left.y === 'number') ly = input.left.y;
-
       if (typeof input.rightX === 'number') rx = input.rightX;
-      else if (input.right && typeof input.right.x === 'number') rx = input.right.x;
-
       if (typeof input.rightY === 'number') ry = input.rightY;
-      else if (input.right && typeof input.right.y === 'number') ry = input.right.y;
     }
-
     return {
       lx: isNaN(lx) ? 0 : lx,
       ly: isNaN(ly) ? 0 : ly,
@@ -59,15 +49,12 @@ export class Player {
   }
 
   update(delta, rawInput) {
-    // Garante valores numéricos válidos
     const input = this.getInputs(rawInput);
 
-    // Proteção se a posição atual virou NaN
     if (isNaN(this.position.x) || isNaN(this.position.y) || isNaN(this.position.z)) {
       this.position.set(0, 12, 60);
     }
 
-    // Rotação YAW (Eixo X Esquerdo)
     if (input.lx !== 0) {
       this.rotation.y -= input.lx * this.rotSpeed * delta;
       this.cameraRollZ = THREE.MathUtils.lerp(this.cameraRollZ, -input.lx * 0.25, delta * 5);
@@ -75,12 +62,10 @@ export class Player {
       this.cameraRollZ = THREE.MathUtils.lerp(this.cameraRollZ, 0, delta * 5);
     }
 
-    // Altitude / Pitch Vertical (Eixo Y Esquerdo)
     if (input.ly !== 0) {
       this.position.y -= input.ly * this.speed * delta;
     }
 
-    // Movimentação FRENTE / TRÁS / LADOS (Analógico Direito)
     const nextPos = this.position.clone();
     if (input.rx !== 0 || input.ry !== 0) {
       const moveVec = new THREE.Vector3(input.rx, 0, input.ry);
@@ -92,7 +77,6 @@ export class Player {
       this.cameraTiltX = THREE.MathUtils.lerp(this.cameraTiltX, 0, delta * 5);
     }
 
-    // Checagem de raio do operador
     const distToOperator = new THREE.Vector2(nextPos.x - this.operatorPos.x, nextPos.z - this.operatorPos.z).length();
     if (!isNaN(distToOperator) && distToOperator <= this.maxRangeMeters) {
       this.position.copy(nextPos);
@@ -105,7 +89,6 @@ export class Player {
     this.mesh.position.copy(this.position);
     this.mesh.rotation.copy(this.rotation);
 
-    // Câmera FPV com rotação tratada
     this.camera.position.copy(this.position);
     this.camera.rotation.set(
       this.rotation.x + this.cameraTiltX,
