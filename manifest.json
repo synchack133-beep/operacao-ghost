@@ -1,0 +1,9 @@
+{
+  "name": "Operação Ghost",
+  "short_name": "OpGhost",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#000000",
+  "theme_color": "#000000"
+}
