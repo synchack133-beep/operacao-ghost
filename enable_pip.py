@@ -1,4 +1,6 @@
-import * as THREE from 'three';
+import os
+
+main_code = '''import * as THREE from 'three';
 import { Player } from './entities/Player.js';
 import { SoldierManager } from './entities/Soldier.js';
 import { MissileSystem } from './entities/Missile.js';
@@ -164,4 +166,9 @@ class Game {
 
 window.addEventListener('DOMContentLoaded', () => {
   new Game();
-});
+});'''
+
+with open('src/main.js', 'w', encoding='utf-8') as f:
+    f.write(main_code)
+
+print("Câmera secundária (CAM DESTINO) ativada com sucesso!")
