@@ -7,44 +7,41 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <title>OPERAÇÃO GHOST — DRONE WARFARE</title>
   <style>
-    * { box-sizing: border-box; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+    * { box-sizing: border-box; user-select: none; -webkit-user-select: none; touch-action: none; }
     html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; background-color: #000; font-family: 'Courier New', monospace; color: #00ff96; }
     #canvas-container { width: 100%; height: 100%; position: absolute; top:0; left:0; z-index: 1; }
-    
-    /* HUD Overlays */
+
     #hud { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; display: flex; flex-direction: column; justify-content: space-between; padding: max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left)); }
-    
-    .hud-header { display: flex; justify-content: space-between; align-items: flex-start; background: rgba(0, 20, 10, 0.75); padding: 8px 14px; border: 1px solid rgba(0, 255, 150, 0.4); border-radius: 6px; backdrop-filter: blur(4px); }
-    .bar-container { width: 120px; height: 10px; background: rgba(0, 50, 25, 0.8); border: 1px solid #00ff96; margin-top: 4px; border-radius: 3px; overflow: hidden; }
+    .hud-header { display: flex; justify-content: space-between; align-items: flex-start; background: rgba(0, 20, 10, 0.85); padding: 8px 12px; border: 1px solid rgba(0, 255, 150, 0.5); border-radius: 6px; backdrop-filter: blur(4px); }
+    .bar-container { width: 110px; height: 8px; background: rgba(0, 50, 25, 0.8); border: 1px solid #00ff96; margin-top: 3px; border-radius: 3px; overflow: hidden; }
     .bar-fill { height: 100%; background: #00ff96; width: 100%; transition: width 0.1s ease; }
     .bar-fill.battery { background: #00ccff; }
-    
-    /* Mira Central */
-    #crosshair { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 36px; height: 36px; pointer-events: none; z-index: 11; }
-    #crosshair::before, #crosshair::after { content: ''; position: absolute; background: #00ff96; box-shadow: 0 0 8px #00ff96; }
-    #crosshair::before { top: 17px; left: 0; width: 36px; height: 2px; }
-    #crosshair::after { top: 0; left: 17px; width: 2px; height: 36px; }
-    
-    /* Radar Canvas */
-    #radar-canvas { width: 80px; height: 80px; border-radius: 50%; border: 2px solid #00ff96; background: rgba(0,25,10,0.8); box-shadow: 0 0 10px rgba(0,255,150,0.3); }
 
-    /* Touch Controls */
-    #touch-controls { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 20; pointer-events: none; }
-    .touch-btn { pointer-events: auto; background: rgba(0, 255, 150, 0.18); border: 2px solid #00ff96; color: #00ff96; font-weight: bold; border-radius: 50%; display: flex; justify-content: center; align-items: center; text-shadow: 0 0 5px #00ff96; font-size: 14px; box-shadow: 0 0 12px rgba(0,255,150,0.2); }
-    .touch-btn:active { background: rgba(0, 255, 150, 0.5); transform: scale(0.95); }
-    
-    #btn-shoot { position: absolute; bottom: 25px; right: 25px; width: 75px; height: 75px; background: rgba(255, 0, 85, 0.3); border-color: #ff0055; color: #ff0055; font-size: 20px; text-shadow: 0 0 5px #ff0055; }
-    #btn-shoot:active { background: rgba(255, 0, 85, 0.7); }
-    
-    #btn-up { position: absolute; bottom: 115px; right: 25px; width: 55px; height: 55px; }
-    #btn-down { position: absolute; bottom: 115px; right: 90px; width: 55px; height: 55px; }
+    #crosshair { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 30px; height: 30px; pointer-events: none; z-index: 11; }
+    #crosshair::before, #crosshair::after { content: ''; position: absolute; background: rgba(0,255,150,0.8); }
+    #crosshair::before { top: 14px; left: 0; width: 30px; height: 2px; }
+    #crosshair::after { top: 0; left: 14px; width: 2px; height: 30px; }
 
-    /* Modais */
-    .modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 10, 5, 0.94); z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
-    .modal h1 { color: #00ff96; font-size: 24px; text-shadow: 0 0 10px #00ff96; margin-bottom: 10px; letter-spacing: 2px; }
-    .modal p { color: #a0ffd0; font-size: 13px; max-width: 480px; line-height: 1.5; margin-bottom: 20px; }
-    .btn-main { pointer-events: auto; background: #00ff96; color: #000; border: none; padding: 14px 28px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; box-shadow: 0 0 15px #00ff96; letter-spacing: 1px; }
-    .btn-main:active { transform: scale(0.96); }
+    #radar-canvas { width: 75px; height: 75px; border-radius: 50%; border: 2px solid #00ff96; background: rgba(0,20,10,0.85); }
+
+    /* JOYSTICKS VIRTUAIS MOBILE */
+    .joystick-zone { position: absolute; bottom: 15px; width: 110px; height: 110px; border-radius: 50%; background: rgba(0, 255, 150, 0.08); border: 2px dashed rgba(0, 255, 150, 0.4); display: flex; justify-content: center; align-items: center; pointer-events: auto; z-index: 25; }
+    #zone-left { left: 15px; }
+    #zone-right { right: 15px; }
+
+    .joystick-stick { width: 44px; height: 44px; border-radius: 50%; background: rgba(0, 255, 150, 0.4); border: 2px solid #00ff96; box-shadow: 0 0 10px #00ff96; pointer-events: none; transition: transform 0.04s ease-out; }
+    .joystick-label { position: absolute; top: -20px; font-size: 9px; font-weight: bold; color: #00ff96; letter-spacing: 1px; text-shadow: 0 0 4px #000; }
+
+    /* BOTÃO DE DISPARO 🔥 */
+    #btn-shoot { position: absolute; bottom: 135px; right: 20px; width: 68px; height: 68px; border-radius: 50%; background: rgba(255, 0, 85, 0.35); border: 2px solid #ff0055; color: #ff0055; font-size: 24px; display: flex; justify-content: center; align-items: center; box-shadow: 0 0 15px rgba(255,0,85,0.4); pointer-events: auto; z-index: 30; }
+    #btn-shoot:active { background: rgba(255, 0, 85, 0.8); transform: scale(0.92); }
+
+    .top-btn { pointer-events: auto; background: rgba(0,20,10,0.8); border: 1px solid #00ff96; color: #00ff96; padding: 6px 10px; font-size: 11px; border-radius: 4px; font-family: monospace; font-weight: bold; }
+
+    .modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 10, 5, 0.95); z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
+    .modal h1 { color: #00ff96; font-size: 22px; text-shadow: 0 0 10px #00ff96; margin-bottom: 10px; }
+    .modal p { color: #a0ffd0; font-size: 12px; max-width: 420px; line-height: 1.6; margin-bottom: 20px; }
+    .btn-main { pointer-events: auto; background: #00ff96; color: #000; border: none; padding: 14px 28px; font-size: 15px; font-weight: bold; border-radius: 6px; cursor: pointer; box-shadow: 0 0 15px #00ff96; }
   </style>
   <script type="importmap">
     {
@@ -60,41 +57,56 @@
   <div id="hud">
     <div class="hud-header">
       <div>
-        <div style="font-size: 10px; font-weight: bold;">INTEGRIDADE STRUCT</div>
+        <div style="font-size: 9px; font-weight: bold;">ESTRUTURA</div>
         <div class="bar-container"><div id="health-bar" class="bar-fill"></div></div>
-        <div style="font-size: 10px; font-weight: bold; margin-top: 4px;">BATERIA DRONE</div>
+        <div style="font-size: 9px; font-weight: bold; margin-top: 3px;">BATERIA</div>
         <div class="bar-container"><div id="battery-bar" class="bar-fill battery"></div></div>
       </div>
       <div style="text-align: center;">
-        <canvas id="radar-canvas" width="80" height="80"></canvas>
+        <canvas id="radar-canvas" width="75" height="75"></canvas>
       </div>
       <div style="text-align: right;">
-        <div id="intel-count" style="font-size: 12px; font-weight: bold;">DADOS: 0 / 4</div>
-        <div id="alt-speed" style="font-size: 10px; color: #80ffc0; margin-top: 4px;">ALT: 5m | VEL: 0km/h</div>
+        <div id="intel-count" style="font-size: 11px; font-weight: bold;">DADOS: 0 / 4</div>
+        <div id="alt-speed" style="font-size: 9px; color: #80ffc0; margin-top: 3px;">ALT: 3m | VEL: 0km/h</div>
       </div>
     </div>
   </div>
 
   <div id="crosshair"></div>
 
-  <div id="touch-controls">
-    <button id="btn-fullscreen" class="touch-btn" style="position: absolute; top: 12px; right: 12px; width: auto; height: auto; border-radius: 4px; padding: 6px 10px; font-size: 11px;" onclick="toggleFS()">📺 TELA CHEIA</button>
-    <button id="btn-nightvision" class="touch-btn" style="position: absolute; top: 52px; right: 12px; width: 42px; height: 42px; border-radius: 8px;">🌙</button>
-    <button id="btn-shoot" class="touch-btn">🔥</button>
-    <button id="btn-up" class="touch-btn">▲</button>
-    <button id="btn-down" class="touch-btn">▼</button>
+  <!-- BOTOES DE TOPO -->
+  <div style="position: absolute; top: 60px; right: 12px; z-index: 40; display: flex; gap: 8px;">
+    <button id="btn-nightvision" class="top-btn">🌙 NOTURNO</button>
+    <button id="btn-fullscreen" class="top-btn" onclick="toggleFS()">📺 CHEIA</button>
   </div>
 
+  <!-- JOYSTICKS VIRTUAIS -->
+  <div id="zone-left" class="joystick-zone">
+    <div class="joystick-label">VOO / GIRO</div>
+    <div id="stick-left" class="joystick-stick"></div>
+  </div>
+
+  <div id="zone-right" class="joystick-zone">
+    <div class="joystick-label">MOVIMENTO</div>
+    <div id="stick-right" class="joystick-stick"></div>
+  </div>
+
+  <button id="btn-shoot">🔥</button>
+
+  <!-- MODAIS -->
   <div id="modal-start" class="modal">
-    <h1>OPERAÇÃO GHOST</h1>
-    <p>COMBATE ARCADE TÁTICO<br><br>• Elimine os caças inimigos com o botão de disparo (🔥)<br>• Colete os 4 módulos de dados espalhados<br>• Arraste o dedo na tela para pilotar e direcionar a visão</p>
-    <button id="btn-start" class="btn-main">INICIAR MISSÃO</button>
+    <h1>OPERAÇÃO GHOST 3D</h1>
+    <p><b>CONTROLES DE PILOTAGEM MULTI-TOUCH:</b><br><br>
+    🕹️ <b>Esquerda:</b> Empurre para Cima/Baixo (Subir/Descer) e Lados (Girar)<br>
+    🕹️ <b>Direita:</b> Empurre para Cima/Baixo (Avançar/Recuar) e Lados (Inclinado)<br>
+    🔥 <b>Botão Redondo:</b> Atirar Lasers</p>
+    <button id="btn-start" class="btn-main">INICIAR PILOTAGEM</button>
   </div>
 
   <div id="modal-end" class="modal" style="display: none;">
     <h1 id="end-title">FALHA NA MISSÃO</h1>
-    <p id="end-message">Seu drone foi destruído no combate.</p>
-    <button id="btn-restart" class="btn-main">REINICIAR MISSÃO</button>
+    <p id="end-message">Seu drone foi destruído.</p>
+    <button id="btn-restart" class="btn-main">REINICIAR</button>
   </div>
 
   <script>
