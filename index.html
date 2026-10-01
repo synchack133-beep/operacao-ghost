@@ -3,45 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
   <title>OPERAÇÃO GHOST — DRONE WARFARE</title>
   <style>
     * { box-sizing: border-box; user-select: none; -webkit-user-select: none; touch-action: none; }
     html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; background-color: #000; font-family: 'Courier New', monospace; color: #00ff96; }
     #canvas-container { width: 100%; height: 100%; position: absolute; top:0; left:0; z-index: 1; }
 
-    #hud { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; display: flex; flex-direction: column; justify-content: space-between; padding: max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left)); }
-    .hud-header { display: flex; justify-content: space-between; align-items: flex-start; background: rgba(0, 20, 10, 0.85); padding: 8px 12px; border: 1px solid rgba(0, 255, 150, 0.5); border-radius: 6px; backdrop-filter: blur(4px); }
-    .bar-container { width: 110px; height: 8px; background: rgba(0, 50, 25, 0.8); border: 1px solid #00ff96; margin-top: 3px; border-radius: 3px; overflow: hidden; }
-    .bar-fill { height: 100%; background: #00ff96; width: 100%; transition: width 0.1s ease; }
-    .bar-fill.battery { background: #00ccff; }
+    #hud { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; display: flex; flex-direction: column; justify-content: space-between; padding: 10px; }
+    .hud-header { display: flex; justify-content: space-between; align-items: flex-start; background: rgba(0, 20, 10, 0.85); padding: 8px 12px; border: 1px solid rgba(0, 255, 150, 0.5); border-radius: 6px; }
+    
+    /* MOLDURA CÂMERA DE DESTINO PIP (Canto Superior Direito) */
+    #pip-container { position: absolute; top: 65px; right: 12px; width: 160px; height: 120px; border: 2px solid #00c8ff; background: rgba(0, 10, 20, 0.8); z-index: 20; pointer-events: none; box-shadow: 0 0 10px rgba(0,200,255,0.4); }
+    #pip-title { position: absolute; top: -16px; left: 0; width: 100%; font-size: 8px; font-weight: bold; color: #00c8ff; text-align: center; }
 
-    #crosshair { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 30px; height: 30px; pointer-events: none; z-index: 11; }
-    #crosshair::before, #crosshair::after { content: ''; position: absolute; background: rgba(0,255,150,0.8); }
-    #crosshair::before { top: 14px; left: 0; width: 30px; height: 2px; }
-    #crosshair::after { top: 0; left: 14px; width: 2px; height: 30px; }
-
-    #radar-canvas { width: 75px; height: 75px; border-radius: 50%; border: 2px solid #00ff96; background: rgba(0,20,10,0.85); }
-
-    /* JOYSTICKS VIRTUAIS MOBILE */
-    .joystick-zone { position: absolute; bottom: 15px; width: 110px; height: 110px; border-radius: 50%; background: rgba(0, 255, 150, 0.08); border: 2px dashed rgba(0, 255, 150, 0.4); display: flex; justify-content: center; align-items: center; pointer-events: auto; z-index: 25; }
+    /* CONTROLES TOUCH */
+    .joystick-zone { position: absolute; bottom: 15px; width: 110px; height: 110px; border-radius: 50%; background: rgba(0, 255, 150, 0.08); border: 2px dashed rgba(0, 255, 150, 0.4); pointer-events: auto; z-index: 25; }
     #zone-left { left: 15px; }
     #zone-right { right: 15px; }
 
-    .joystick-stick { width: 44px; height: 44px; border-radius: 50%; background: rgba(0, 255, 150, 0.4); border: 2px solid #00ff96; box-shadow: 0 0 10px #00ff96; pointer-events: none; transition: transform 0.04s ease-out; }
-    .joystick-label { position: absolute; top: -20px; font-size: 9px; font-weight: bold; color: #00ff96; letter-spacing: 1px; text-shadow: 0 0 4px #000; }
+    .joystick-stick { width: 44px; height: 44px; border-radius: 50%; background: rgba(0, 255, 150, 0.4); border: 2px solid #00ff96; position: absolute; top: 33px; left: 33px; pointer-events: none; }
 
-    /* BOTÃO DE DISPARO 🔥 */
-    #btn-shoot { position: absolute; bottom: 135px; right: 20px; width: 68px; height: 68px; border-radius: 50%; background: rgba(255, 0, 85, 0.35); border: 2px solid #ff0055; color: #ff0055; font-size: 24px; display: flex; justify-content: center; align-items: center; box-shadow: 0 0 15px rgba(255,0,85,0.4); pointer-events: auto; z-index: 30; }
-    #btn-shoot:active { background: rgba(255, 0, 85, 0.8); transform: scale(0.92); }
-
-    .top-btn { pointer-events: auto; background: rgba(0,20,10,0.8); border: 1px solid #00ff96; color: #00ff96; padding: 6px 10px; font-size: 11px; border-radius: 4px; font-family: monospace; font-weight: bold; }
+    /* BOTÕES DE AÇÃO */
+    #btn-drop-missile { position: absolute; bottom: 135px; right: 20px; width: 68px; height: 68px; border-radius: 50%; background: rgba(255, 180, 0, 0.35); border: 2px solid #ffb400; color: #ffb400; font-size: 22px; display: flex; justify-content: center; align-items: center; pointer-events: auto; z-index: 30; font-weight: bold; }
+    #btn-drop-missile:active { background: rgba(255, 180, 0, 0.8); transform: scale(0.92); }
 
     .modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 10, 5, 0.95); z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
-    .modal h1 { color: #00ff96; font-size: 22px; text-shadow: 0 0 10px #00ff96; margin-bottom: 10px; }
-    .modal p { color: #a0ffd0; font-size: 12px; max-width: 420px; line-height: 1.6; margin-bottom: 20px; }
-    .btn-main { pointer-events: auto; background: #00ff96; color: #000; border: none; padding: 14px 28px; font-size: 15px; font-weight: bold; border-radius: 6px; cursor: pointer; box-shadow: 0 0 15px #00ff96; }
+    .btn-main { pointer-events: auto; background: #00ff96; color: #000; border: none; padding: 14px 28px; font-size: 15px; font-weight: bold; border-radius: 6px; cursor: pointer; }
   </style>
   <script type="importmap">
     {
@@ -57,70 +44,35 @@
   <div id="hud">
     <div class="hud-header">
       <div>
-        <div style="font-size: 9px; font-weight: bold;">ESTRUTURA</div>
-        <div class="bar-container"><div id="health-bar" class="bar-fill"></div></div>
-        <div style="font-size: 9px; font-weight: bold; margin-top: 3px;">BATERIA</div>
-        <div class="bar-container"><div id="battery-bar" class="bar-fill battery"></div></div>
-      </div>
-      <div style="text-align: center;">
-        <canvas id="radar-canvas" width="75" height="75"></canvas>
+        <div style="font-size: 9px; font-weight: bold; color: #00ff96;">DRONE FPV RECON</div>
+        <div id="enemy-count" style="font-size: 11px; font-weight: bold; color: #ff3c3c; margin-top: 2px;">INIMIGOS: 10/10</div>
       </div>
       <div style="text-align: right;">
-        <div id="intel-count" style="font-size: 11px; font-weight: bold;">DADOS: 0 / 4</div>
-        <div id="alt-speed" style="font-size: 9px; color: #80ffc0; margin-top: 3px;">ALT: 3m | VEL: 0km/h</div>
+        <div id="alt-info" style="font-size: 10px; color: #00c8ff;">ALTITUDE: 15m</div>
       </div>
     </div>
   </div>
 
-  <div id="crosshair"></div>
-
-  <!-- BOTOES DE TOPO -->
-  <div style="position: absolute; top: 60px; right: 12px; z-index: 40; display: flex; gap: 8px;">
-    <button id="btn-nightvision" class="top-btn">🌙 NOTURNO</button>
-    <button id="btn-fullscreen" class="top-btn" onclick="toggleFS()">📺 CHEIA</button>
+  <div id="pip-container">
+    <div id="pip-title">CAM DESTINO (MÍSSIL)</div>
   </div>
 
-  <!-- JOYSTICKS VIRTUAIS -->
-  <div id="zone-left" class="joystick-zone">
-    <div class="joystick-label">VOO / GIRO</div>
-    <div id="stick-left" class="joystick-stick"></div>
-  </div>
+  <!-- JOYSTICKS -->
+  <div id="zone-left" class="joystick-zone"><div id="stick-left" class="joystick-stick"></div></div>
+  <div id="zone-right" class="joystick-zone"><div id="stick-right" class="joystick-stick"></div></div>
 
-  <div id="zone-right" class="joystick-zone">
-    <div class="joystick-label">MOVIMENTO</div>
-    <div id="stick-right" class="joystick-stick"></div>
-  </div>
+  <!-- BOTÃO SOLTAR MÍSSIL / BOMBA -->
+  <button id="btn-drop-missile">🚀</button>
 
-  <button id="btn-shoot">🔥</button>
-
-  <!-- MODAIS -->
   <div id="modal-start" class="modal">
     <h1>OPERAÇÃO GHOST 3D</h1>
-    <p><b>CONTROLES DE PILOTAGEM MULTI-TOUCH:</b><br><br>
-    🕹️ <b>Esquerda:</b> Empurre para Cima/Baixo (Subir/Descer) e Lados (Girar)<br>
-    🕹️ <b>Direita:</b> Empurre para Cima/Baixo (Avançar/Recuar) e Lados (Inclinado)<br>
-    🔥 <b>Botão Redondo:</b> Atirar Lasers</p>
-    <button id="btn-start" class="btn-main">INICIAR PILOTAGEM</button>
+    <p><b>GUERRA DE DRONES & CÂMERA DE DESTINO</b><br><br>
+    🕹️ <b>Analógico Esquerdo:</b> Altitude (Subir/Descer) e Girar<br>
+    🕹️ <b>Analógico Direito:</b> Mover pelo campo de batalha<br>
+    🚀 <b>Botão Míssil:</b> Lança munição no alvo exibido no monitor superior (PiP)</p>
+    <button id="btn-start" class="btn-main">INICIAR COMBATE</button>
   </div>
 
-  <div id="modal-end" class="modal" style="display: none;">
-    <h1 id="end-title">FALHA NA MISSÃO</h1>
-    <p id="end-message">Seu drone foi destruído.</p>
-    <button id="btn-restart" class="btn-main">REINICIAR</button>
-  </div>
-
-  <script>
-    function toggleFS() {
-      const doc = document.documentElement;
-      if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-        if (doc.requestFullscreen) doc.requestFullscreen();
-        else if (doc.webkitRequestFullscreen) doc.webkitRequestFullscreen();
-      } else {
-        if (document.exitFullscreen) document.exitFullscreen();
-        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-      }
-    }
-  </script>
   <script type="module" src="./src/main.js"></script>
 </body>
 </html>
