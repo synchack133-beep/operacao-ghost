@@ -1,4 +1,22 @@
-import { eventBus } from '../core/EventBus.js';
+import os
+
+# Atualiza index.html para garantir pointer-events e estilo de toque
+index_path = 'index.html'
+if os.path.exists(index_path):
+    with open(index_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    
+    # Injeta melhorias no CSS do botão
+    old_btn_css = ".btn-main { display: inline-block;"
+    new_btn_css = ".btn-main { display: inline-block; pointer-events: auto !important; touch-action: manipulation; -webkit-tap-highlight-color: transparent; "
+    if old_btn_css in content:
+        content = content.replace(old_btn_css, new_btn_css)
+        with open(index_path, 'w', encoding='utf-8') as f:
+            f.write(content)
+
+# Atualiza UIManager.js para escutar eventos touchstart e click simultaneamente
+ui_path = 'src/ui/UIManager.js'
+ui_code = '''import { eventBus } from '../core/EventBus.js';
 import { gameStateMachine, STATES } from '../core/GameState.js';
 import { soundManager } from '../audio/SoundManager.js';
 
@@ -88,3 +106,9 @@ export class UIManager {
     if (this.modalEnd) this.modalEnd.style.display = 'flex';
   }
 }
+'''
+
+with open(ui_path, 'w', encoding='utf-8') as f:
+    f.write(ui_code)
+
+print("Ajustes de touch aplicados com sucesso!")
