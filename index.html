@@ -61,4 +61,31 @@ $('alt').textContent=Math.max(0,Math.round(drone.position.y-groundY(drone.positi
 points.forEach(p=>{if(!p.found&&p.group.children[1])p.group.children[1].rotation.y+=dt*1.5});const ctx=$('map').getContext('2d');ctx.clearRect(0,0,120,120);ctx.fillStyle='#07130f';ctx.fillRect(0,0,120,120);ctx.strokeStyle='#24523d';ctx.lineWidth=.6;for(let i=0;i<=120;i+=20){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i,120);ctx.stroke();ctx.beginPath();ctx.moveTo(0,i);ctx.lineTo(120,i);ctx.stroke()}const mx=x=>60+x/400*110,my=z=>60+z/400*110;ctx.fillStyle='#9dffca';ctx.fillRect(mx(0)-3,my(10)-3,6,6);points.forEach(p=>{if(!p.found){ctx.fillStyle='#ffd47a';ctx.beginPath();ctx.arc(mx(p.pos.x),my(p.pos.z),3,0,Math.PI*2);ctx.fill()}});enemies.forEach(e=>{if(e.alive){ctx.fillStyle='#ff6666';ctx.fillRect(mx(e.group.position.x)-2,my(e.group.position.z)-2,4,4)}});ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(mx(drone.position.x),my(drone.position.z),3,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#fff';ctx.beginPath();ctx.moveTo(mx(drone.position.x),my(drone.position.z));ctx.lineTo(mx(drone.position.x)+Math.sin(yaw)*8,my(drone.position.z)-Math.cos(yaw)*8);ctx.stroke();
 if(objectiveCount>=m.required&&drone.position.distanceTo(new THREE.Vector3(0,groundY(0,10)+10,10))<22){completeMission()}}
 init();
-</script></body></html>
+</script>
+<script>
+// Suporte a Touch para celular (Girar Câmera ao arrastar o dedo)
+let touchStartX = 0, touchStartY = 0;
+document.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 1) {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+    }
+}, {passive: true});
+
+document.addEventListener('touchmove', (e) => {
+    if (e.touches.length === 1) {
+        let deltaX = e.touches[0].clientX - touchStartX;
+        let deltaY = e.touches[0].clientY - touchStartY;
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        
+        // Simula o movimento do mouse para girar a câmera 3D
+        window.dispatchEvent(new MouseEvent('mousemove', {
+            movementX: deltaX * 1.5,
+            movementY: deltaY * 1.5
+        }));
+    }
+}, {passive: true});
+</script>
+
+</body></html>
