@@ -2,84 +2,83 @@ import * as THREE from 'three';
 import { eventBus } from '../core/EventBus.js';
 
 export class EnemyManager {
-  constructor(scene, player) {
+  constructor(scene, player, explosionSystem) {
     this.scene = scene;
     this.player = player;
+    this.explosionSystem = explosionSystem;
     this.enemies = [];
     this.spawnEnemies();
   }
 
   spawnEnemies() {
-    // Posições de patrulha dos drones hostis
-    const patrolZones = [
-      { x: 10, z: 10, radius: 7 },
-      { x: -15, z: 15, radius: 9 },
-      { x: 20, z: -15, radius: 8 },
-      { x: -10, z: -20, radius: 6 }
+    const spawnPoints = [
+      { x: 15, z: 15 },
+      { x: -20, z: 20 },
+      { x: 25, z: -20 },
+      { x: -15, z: -25 },
+      { x: 0, z: 30 }
     ];
 
-    patrolZones.forEach((zone, idx) => {
+    spawnPoints.forEach((pt, idx) => {
       const group = new THREE.Group();
 
-      # Geometria do drone inimigo (octaedro vermelho)
-      const geo = new THREE.OctahedronGeometry(1.2, 0);
-      const mat = new THREE.MeshBasicMaterial({ color: 0xff0055, wireframe: true });
-      const mesh = new THREE.Mesh(geo, mat);
+      // Geometria estilo caça de combate
+      const bodyGeo = new THREE.ConeGeometry(0.8, 2.5, 5);
+      bodyGeo.rotateX(Math.PI / 2);
+      const mat = new THREE.MeshBasicMaterial({ color: 0xff0044, wireframe: true });
+      const mesh = new THREE.Mesh(bodyGeo, mat);
       group.add(mesh);
 
-      # Anel de radar / deteção
-      const ringGeo = new THREE.RingGeometry(0.8, 3.0, 16);
-      const ringMat = new THREE.MeshBasicMaterial({ 
-        color: 0xff0055, 
-        wireframe: true, 
-        side: THREE.DoubleSide, 
-        transparent: true, 
-        opacity: 0.4 
-      });
-      const ring = new THREE.Mesh(ringGeo, ringMat);
-      ring.rotation.x = Math.PI / 2;
-      group.add(ring);
+      const wingGeo = new THREE.BoxGeometry(2.5, 0.1, 0.8);
+      const wingMesh = new THREE.Mesh(wingGeo, mat);
+      group.add(wingMesh);
 
-      group.position.set(zone.x, 2, zone.z);
+      group.position.set(pt.x, 3, pt.z);
       this.scene.add(group);
 
       this.enemies.push({
         group: group,
-        startX: zone.x,
-        startZ: zone.z,
-        angle: idx * 1.5,
-        radius: zone.radius,
-        speed: 0.018,
-        detectionRadius: 4.5
+        speed: 0.07,
+        active: true,
+        detectionRange: 18,
+        attackRange: 3.2
       });
     });
   }
 
   update(delta) {
     if (!this.player) return;
-
     const playerPos = this.player.mesh ? this.player.mesh.position : this.player.position;
     if (!playerPos) return;
 
-    this.enemies.forEach(enemy => {
-      // Movimento de patrulha circular
-      enemy.angle += enemy.speed;
-      enemy.group.position.x = enemy.startX + Math.cos(enemy.angle) * enemy.radius;
-      enemy.group.position.z = enemy.startZ + Math.sin(enemy.angle) * enemy.radius;
-      enemy.group.rotation.y += 0.03;
+    this.enemies.forEach((enemy) => {
+      if (!enemy.active) return;
 
-      // Verificação de distância relativamente ao jogador
       const dist = enemy.group.position.distanceTo(playerPos);
-      if (dist < enemy.detectionRadius) {
-        // Reduz a integridade do drone quando detetado
-        eventBus.emit('damagePlayer', 0.3);
+
+      // Inteligência de perseguição arcade
+      if (dist < enemy.detectionRange) {
+        const dir = new THREE.Vector3().subVectors(playerPos, enemy.group.position).normalize();
+        enemy.group.position.addScaledVector(dir, enemy.speed);
+        enemy.group.lookAt(playerPos);
+
+        // Colisão com o drone do jogador
+        if (dist < enemy.attackRange) {
+          if (this.explosionSystem) {
+            this.explosionSystem.createExplosion(enemy.group.position, 0xff0055, 40);
+          }
+          eventBus.emit('damagePlayer', 0.8);
+        }
+      } else {
+        enemy.group.position.y = 3 + Math.sin(Date.now() * 0.003) * 0.5;
+        enemy.group.rotation.y += 0.02;
       }
     });
   }
 
   reset() {
-    this.enemies.forEach((enemy, idx) => {
-      enemy.angle = idx * 1.5;
+    this.enemies.forEach((enemy) => {
+      enemy.active = true;
     });
   }
 }
