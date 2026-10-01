@@ -1,14 +1,9 @@
 <!doctype html>
-<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="theme-color" content="#08120f"><title>OPERAÇÃO GHOST — Drone Warfare</title>
+<html lang="pt-BR"><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="theme-color" content="#08120f"><title>OPERAÇÃO GHOST — Drone Warfare</title>
 <style>
 :root{--green:#9dffca;--line:#65d9a477;--panel:#06110ddd;--amber:#ffd47a;--red:#ff6666}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100f;color:#d7ffe8;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;touch-action:none}canvas{display:block}#game{position:fixed;inset:0}#hud{position:fixed;inset:0;pointer-events:none;text-shadow:0 1px 5px #000} .panel{background:linear-gradient(135deg,#06130fe8,#06130f9c);border:1px solid var(--line);padding:10px 12px;backdrop-filter:blur(5px);clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,0 100%)}#brand{position:absolute;top:14px;left:14px;font-weight:bold;letter-spacing:2px;font-size:14px}#brand small{display:block;color:#81bda0;font-size:9px;letter-spacing:1px;margin-top:4px}#stats{position:absolute;top:14px;right:14px;min-width:145px;font-size:11px;line-height:1.8}#mission{position:absolute;top:100px;left:14px;width:min(260px,46vw);font-size:11px;line-height:1.65}#mission strong{color:var(--green);font-size:12px}#objective{color:#ffe29a;margin-top:5px}#reticle{position:absolute;left:50%;top:50%;width:32px;height:32px;transform:translate(-50%,-50%);border:1px solid #9dffca88;border-radius:50%}#reticle:before,#reticle:after{content:"";position:absolute;background:var(--green)}#reticle:before{width:48px;height:1px;left:-9px;top:15px}#reticle:after{height:48px;width:1px;top:-9px;left:15px}#reticle i{position:absolute;width:4px;height:4px;background:var(--green);border-radius:50%;top:13px;left:13px}#bottom{position:absolute;left:50%;bottom:15px;transform:translateX(-50%);display:flex;gap:7px;align-items:end}button{font:inherit;color:#d7ffe8;background:#071710eF;border:1px solid #65d9a4a0;border-radius:5px;padding:10px 12px;cursor:pointer;pointer-events:auto;min-height:39px}button:active,button.active{background:#1b6244;border-color:var(--green)}button:disabled{opacity:.4}#bottom button{font-size:10px}#alert{position:absolute;top:45%;left:50%;transform:translate(-50%,-50%);font-size:13px;color:var(--amber);letter-spacing:2px;text-align:center;max-width:90vw}#mapbox{position:absolute;right:14px;bottom:14px;width:120px;height:120px;padding:5px}#map{width:100%;height:100%;display:block}#hint{position:absolute;bottom:16px;left:14px;font-size:10px;color:#b0d4c0;max-width:220px;line-height:1.6}#overlay{position:fixed;inset:0;background:radial-gradient(ellipse at center,#112c23ed,#030907f5);display:flex;align-items:center;justify-content:center;z-index:5;padding:20px}#card{width:min(560px,100%);max-height:90vh;overflow:auto;border:1px solid #65d9a4a8;background:#06110ff2;padding:clamp(20px,5vw,38px);box-shadow:0 0 70px #1a9b6040}h1{font-size:clamp(28px,7vw,46px);letter-spacing:3px;margin:0;color:#d9ffeb}h1 span{color:var(--green)}.eyebrow{color:var(--green);font-size:10px;letter-spacing:3px;margin-bottom:14px}.desc{color:#b5cfc1;line-height:1.65;font-size:13px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}.primary{background:#b4ffd5;color:#062016;font-weight:bold}.tiny{font-size:10px;color:#8bb29e;line-height:1.6;margin-top:15px}.mobile-controls{display:none;position:fixed;inset:0;pointer-events:none;z-index:3}.stick{position:absolute;bottom:32px;left:24px;width:116px;height:116px;border:1px solid #9dffca80;border-radius:50%;background:#06110f66;pointer-events:auto;touch-action:none}.knob{position:absolute;width:44px;height:44px;border-radius:50%;left:35px;top:35px;background:#9dffca55;border:1px solid var(--green)}#touchLook{position:absolute;right:0;top:20%;height:60%;width:48%;pointer-events:auto;touch-action:none}#touchButtons{position:absolute;right:16px;bottom:30px;display:grid;grid-template-columns:repeat(2,58px);gap:8px;pointer-events:auto}#touchButtons button{height:50px;padding:3px;font-size:10px;background:#06110fdd}#toast{position:absolute;top:76px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--amber);text-align:center;max-width:85vw}body.thermal canvas{filter:sepia(1) hue-rotate(65deg) saturate(2.7) contrast(1.2)}body.night canvas{filter:brightness(.65) hue-rotate(65deg) saturate(.7)}@media(max-width:650px){#brand{font-size:12px;top:9px;left:9px}#stats{top:9px;right:9px;font-size:10px;min-width:120px;padding:6px 8px}#mission{top:78px;left:9px;padding:7px 9px;font-size:10px;width:44vw}#mapbox{width:88px;height:88px;right:8px;bottom:8px}#hint{display:none}#bottom{bottom:9px;gap:4px}#bottom button{font-size:9px;padding:8px 7px;min-height:34px}#reticle{width:25px;height:25px}#reticle:before{left:-8px;top:11px;width:39px}#reticle:after{top:-8px;left:11px;height:39px}#reticle i{top:10px;left:10px}.mobile-controls{display:block}#mission .sub{display:none}}
-</style>
-<link rel="manifest" href="manifest.json">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-</head><body><div id="game"></div><div id="hud"><div id="brand" class="panel">OPERAÇÃO GHOST<small>UNIDADE REMOTA // SIMULAÇÃO FICTÍCIA</small></div><div id="stats" class="panel">ALT <b id="alt">45</b> m<br>VEL <b id="speed">0</b> km/h<br>BATERIA <b id="battery">100</b>%<br>SINAL <b id="signal">100</b>%<br>SISTEMA <b id="health">100</b>%</div><div id="mission" class="panel"><strong id="missionName">01 / PRIMEIRO CONTATO</strong><div id="missionText">Explore o setor e localize o ponto de observação.</div><div id="objective">OBJETIVO: 0 / 2</div><div class="sub">PROTOCOLO: identifique antes de agir.</div></div><div id="reticle"><i></i></div><div id="alert"></div><div id="toast"></div><div id="hint">WASD mover · Espaço subir · Shift descer<br>Mouse olhar · Clique disparo fictício · E interagir · Esc pausar</div><div id="bottom"><button id="viewBtn">VISÃO: NORMAL</button><button id="interactBtn">E · INTERAGIR</button><button id="fireBtn">PULSO · 8</button><button id="pauseBtn">Ⅱ PAUSAR</button></div><div id="mapbox" class="panel"><canvas id="map" width="120" height="120"></canvas></div></div>
+</style></head><body><div id="game"></div><div id="hud"><div id="brand" class="panel">OPERAÇÃO GHOST<small>UNIDADE REMOTA // SIMULAÇÃO FICTÍCIA</small></div><div id="stats" class="panel">ALT <b id="alt">45</b> m<br>VEL <b id="speed">0</b> km/h<br>BATERIA <b id="battery">100</b>%<br>SINAL <b id="signal">100</b>%<br>SISTEMA <b id="health">100</b>%</div><div id="mission" class="panel"><strong id="missionName">01 / PRIMEIRO CONTATO</strong><div id="missionText">Explore o setor e localize o ponto de observação.</div><div id="objective">OBJETIVO: 0 / 2</div><div class="sub">PROTOCOLO: identifique antes de agir.</div></div><div id="reticle"><i></i></div><div id="alert"></div><div id="toast"></div><div id="hint">WASD mover · Espaço subir · Shift descer<br>Mouse olhar · Clique disparo fictício · E interagir · Esc pausar</div><div id="bottom"><button id="viewBtn">VISÃO: NORMAL</button><button id="interactBtn">E · INTERAGIR</button><button id="fireBtn">PULSO · 8</button><button id="pauseBtn">Ⅱ PAUSAR</button></div><div id="mapbox" class="panel"><canvas id="map" width="120" height="120"></canvas></div></div>
 <div class="mobile-controls" id="mobile"><div class="stick" id="stick"><div class="knob" id="knob"></div></div><div id="touchLook"></div><div id="touchButtons"><button id="upBtn">▲ SUBIR</button><button id="downBtn">▼ DESCER</button><button id="touchFire">PULSO</button><button id="touchInteract">AÇÃO</button></div></div>
 <div id="overlay"><div id="card"><div class="eyebrow">CENTRO DE OPERAÇÕES // CANAL SEGURO</div><h1>OPERAÇÃO <span>GHOST</span></h1><p class="desc">Você controla um drone de reconhecimento em uma zona de conflito inteiramente fictícia. Explore, identifique ameaças, proteja unidades aliadas e retorne à base. O jogo prioriza observação, navegação e decisões responsáveis.</p><p class="desc"><b>MISSÃO 01 — PRIMEIRO CONTATO</b><br>Marque dois pontos de interesse e retorne ao círculo da base. Use o pulso de energia fictício apenas contra drones hostis identificados.</p><div class="actions"><button class="primary" id="startBtn">INICIAR MISSÃO</button><button id="howBtn">COMO JOGAR</button></div><div class="tiny" id="menuNote">Carregando ambiente 3D…</div></div></div>
 <script type="module">
@@ -68,179 +63,74 @@ points.forEach(p=>{if(!p.found&&p.group.children[1])p.group.children[1].rotation
 if(objectiveCount>=m.required&&drone.position.distanceTo(new THREE.Vector3(0,groundY(0,10)+10,10))<22){completeMission()}}
 init();
 </script>
-<script>
-// Suporte a Touch para celular (Girar Câmera ao arrastar o dedo)
-let touchStartX = 0, touchStartY = 0;
-document.addEventListener('touchstart', (e) => {
-    if (e.touches.length === 1) {
-        touchStartX = e.touches[0].clientX;
-        touchStartY = e.touches[0].clientY;
-    }
-}, {passive: true});
-
-document.addEventListener('touchmove', (e) => {
-    if (e.touches.length === 1) {
-        let deltaX = e.touches[0].clientX - touchStartX;
-        let deltaY = e.touches[0].clientY - touchStartY;
-        touchStartX = e.touches[0].clientX;
-        touchStartY = e.touches[0].clientY;
-        
-        // Simula o movimento do mouse para girar a câmera 3D
-        window.dispatchEvent(new MouseEvent('mousemove', {
-            movementX: deltaX * 1.5,
-            movementY: deltaY * 1.5
-        }));
-    }
-}, {passive: true});
-</script>
-
-
 <style>
-  /* Interface Touch para Celular */
-  .touch-controls {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    z-index: 9999;
-    display: grid;
-    grid-template-columns: repeat(3, 50px);
-    grid-template-rows: repeat(3, 50px);
-    gap: 5px;
-    touch-action: manipulation;
-    user-select: none;
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    overflow: hidden !important;
+    background: #050b08 !important;
+    touch-action: none !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
   }
-  .touch-btn {
-    background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    color: white;
-    font-weight: bold;
-    font-size: 18px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    user-select: none;
-    -webkit-user-select: none;
+
+  canvas {
+    width: 100vw !important;
+    height: 100vh !important;
+    display: block !important;
+    object-fit: contain !important;
   }
-  .touch-btn:active {
-    background: rgba(0, 255, 150, 0.5);
-  }
-  .fly-controls {
-    position: fixed;
-    bottom: 20px;
-    right: 180px;
-    z-index: 9999;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .fly-btn {
-    width: 60px;
-    height: 50px;
-  }
-</style>
 
-<div class="touch-controls">
-  <div></div>
-  <div class="touch-btn" id="btn-w">▲</div>
-  <div></div>
-  <div class="touch-btn" id="btn-a">◀</div>
-  <div></div>
-  <div class="touch-btn" id="btn-d">▶</div>
-  <div></div>
-  <div class="touch-btn" id="btn-s">▼</div>
-  <div></div>
-</div>
-
-<div class="fly-controls">
-  <div class="touch-btn fly-btn" id="btn-subir">SUBIR</div>
-  <div class="touch-btn fly-btn" id="btn-descer">DESCER</div>
-</div>
-
-<script>
-// Simulação de Teclado para os Botões Touch
-function sendKey(key, code, isPress) {
-  const type = isPress ? 'keydown' : 'keyup';
-  const event = new KeyboardEvent(type, {
-    key: key,
-    code: code,
-    bubbles: true,
-    cancelable: true
-  });
-  window.dispatchEvent(event);
-  document.dispatchEvent(event);
-}
-
-function bindTouch(elementId, key, code) {
-  const btn = document.getElementById(elementId);
-  
-  const start = (e) => { e.preventDefault(); sendKey(key, code, true); };
-  const end = (e) => { e.preventDefault(); sendKey(key, code, false); };
-  
-  btn.addEventListener('touchstart', start, {passive: false});
-  btn.addEventListener('touchend', end, {passive: false});
-  btn.addEventListener('mousedown', start);
-  btn.addEventListener('mouseup', end);
-}
-
-bindTouch('btn-w', 'w', 'KeyW');
-bindTouch('btn-a', 'a', 'KeyA');
-bindTouch('btn-s', 's', 'KeyS');
-bindTouch('btn-d', 'd', 'KeyD');
-bindTouch('btn-subir', ' ', 'Space');
-bindTouch('btn-descer', 'Shift', 'ShiftLeft');
-</script>
-
-
-<style>
-  /* Joystick Analógico e Controles Touch Profissionais */
+  /* Overlay de controles táticos minimalistas */
   #touch-canvas-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    z-index: 99999;
+    z-index: 999999;
     pointer-events: none;
-    user-select: none;
-    -webkit-user-select: none;
   }
 
-  .action-btn {
+  .hud-btn {
     position: fixed;
-    z-index: 100000;
-    background: rgba(0, 0, 0, 0.6);
-    border: 2px solid rgba(0, 255, 150, 0.6);
+    z-index: 1000000;
+    background: rgba(8, 24, 18, 0.7);
+    border: 1px solid rgba(0, 255, 150, 0.4);
     color: #00ff96;
+    font-family: monospace;
+    font-size: 11px;
     font-weight: bold;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    user-select: none;
-    -webkit-user-select: none;
-    font-size: 12px;
-    touch-action: manipulation;
-  }
-  .action-btn:active {
-    background: rgba(0, 255, 150, 0.4);
-    color: white;
+    touch-action: none;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 0 8px rgba(0, 255, 150, 0.15);
   }
 
-  #btn-subir { right: 20px; bottom: 120px; width: 60px; height: 60px; }
-  #btn-descer { right: 20px; bottom: 45px; width: 60px; height: 60px; }
-  #btn-disparo { right: 90px; bottom: 70px; width: 70px; height: 70px; border-color: #ff4444; color: #ff4444; }
-  #btn-interagir { right: 90px; bottom: 150px; width: 55px; height: 55px; }
+  .hud-btn:active {
+    background: rgba(0, 255, 150, 0.4);
+    color: #fff;
+    transform: scale(0.92);
+  }
+
+  #btn-fogo { right: 25px; bottom: 30px; width: 62px; height: 62px; border-color: rgba(255, 60, 60, 0.6); color: #ff5555; }
+  #btn-subir { right: 25px; bottom: 105px; width: 48px; height: 48px; }
+  #btn-descer { right: 85px; bottom: 30px; width: 48px; height: 48px; }
+  #btn-interagir { right: 85px; bottom: 90px; width: 42px; height: 42px; font-size: 10px; }
 </style>
 
-<div id="btn-subir" class="action-btn">SUBIR</div>
-<div id="btn-descer" class="action-btn">DESCER</div>
-<div id="btn-disparo" class="action-btn">FOGO</div>
-<div id="btn-interagir" class="action-btn">E</div>
+<div id="btn-fogo" class="hud-btn">FOGO</div>
+<div id="btn-subir" class="hud-btn">▲</div>
+<div id="btn-descer" class="hud-btn">▼</div>
+<div id="btn-interagir" class="hud-btn">E</div>
 
 <script>
 (function() {
-  // Configuração dos eventos de tecla
   const keys = { w: false, a: false, s: false, d: false };
 
   function setKey(key, code, state) {
@@ -252,17 +142,17 @@ bindTouch('btn-descer', 'Shift', 'ShiftLeft');
     document.dispatchEvent(ev);
   }
 
-  // Criação da área Touch
+  // Zonas touch
   const areaLeft = document.createElement('div');
-  areaLeft.style.cssText = 'position:fixed; top:0; left:0; width:50vw; height:100vh; z-index:99998; touch-action:none;';
+  areaLeft.style.cssText = 'position:fixed; top:0; left:0; width:50vw; height:100vh; z-index:999998; touch-action:none;';
   
   const areaRight = document.createElement('div');
-  areaRight.style.cssText = 'position:fixed; top:0; right:0; width:50vw; height:100vh; z-index:99998; touch-action:none;';
+  areaRight.style.cssText = 'position:fixed; top:0; right:0; width:50vw; height:100vh; z-index:999998; touch-action:none;';
 
   document.body.appendChild(areaLeft);
   document.body.appendChild(areaRight);
 
-  // Canvas visual para o Joystick
+  // Canvas Overlay
   const canvas = document.createElement('canvas');
   canvas.id = 'touch-canvas-overlay';
   canvas.width = window.innerWidth;
@@ -275,11 +165,11 @@ bindTouch('btn-descer', 'Shift', 'ShiftLeft');
     canvas.height = window.innerHeight;
   });
 
-  // Joystick Análogo (Lado Esquerdo)
+  // Joystick Análogo Dinâmico
   let joyTouchId = null;
   let joyBase = { x: 0, y: 0 };
   let joyStick = { x: 0, y: 0 };
-  const maxRadius = 50;
+  const maxRadius = 45;
 
   areaLeft.addEventListener('touchstart', (e) => {
     if (joyTouchId !== null) return;
@@ -305,240 +195,10 @@ bindTouch('btn-descer', 'Shift', 'ShiftLeft');
 
         joyStick = { x: joyBase.x + dx, y: joyBase.y + dy };
 
-        // Define direções analógicas -> Teclas WASD
-        setKey('w', 'KeyW', dy < -15);
-        setKey('s', 'KeyS', dy > 15);
-        setKey('a', 'KeyA', dx < -15);
-        setKey('d', 'KeyD', dx > 15);
-
-        drawJoystick();
-        break;
-      }
-    }
-  }, { passive: false });
-
-  const resetJoy = (e) => {
-    for (let i = 0; i < e.changedTouches.length; i++) {
-      if (e.changedTouches[i].identifier === joyTouchId) {
-        joyTouchId = null;
-        setKey('w', 'KeyW', false);
-        setKey('s', 'KeyS', false);
-        setKey('a', 'KeyA', false);
-        setKey('d', 'KeyD', false);
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        break;
-      }
-    }
-  };
-
-  areaLeft.addEventListener('touchend', resetJoy);
-  areaLeft.addEventListener('touchcancel', resetJoy);
-
-  function drawJoystick() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if (joyTouchId === null) return;
-
-    // Base do Joystick
-    ctx.beginPath();
-    ctx.arc(joyBase.x, joyBase.y, maxRadius, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
-    ctx.strokeStyle = 'rgba(0, 255, 150, 0.5)';
-    ctx.lineWidth = 2;
-    ctx.fill();
-    ctx.stroke();
-
-    // Manete do Joystick
-    ctx.beginPath();
-    ctx.arc(joyStick.x, joyStick.y, 25, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(0, 255, 150, 0.7)';
-    ctx.fill();
-  }
-
-  // Rotação de Câmera (Lado Direito da Tela)
-  let camTouchId = null;
-  let lastCamX = 0, lastCamY = 0;
-
-  areaRight.addEventListener('touchstart', (e) => {
-    if (camTouchId !== null) return;
-    const touch = e.changedTouches[0];
-    camTouchId = touch.identifier;
-    lastCamX = touch.clientX;
-    lastCamY = touch.clientY;
-  }, { passive: false });
-
-  areaRight.addEventListener('touchmove', (e) => {
-    for (let i = 0; i < e.changedTouches.length; i++) {
-      if (e.changedTouches[i].identifier === camTouchId) {
-        const touch = e.changedTouches[i];
-        const movementX = (touch.clientX - lastCamX) * 2.2;
-        const movementY = (touch.clientY - lastCamY) * 2.2;
-        lastCamX = touch.clientX;
-        lastCamY = touch.clientY;
-
-        // Dispara movimento de rotação para o motor do jogo
-        window.dispatchEvent(new MouseEvent('mousemove', {
-          movementX: movementX,
-          movementY: movementY,
-          clientX: touch.clientX,
-          clientY: touch.clientY,
-          bubbles: true
-        }));
-        break;
-      }
-    }
-  }, { passive: false });
-
-  const resetCam = (e) => {
-    for (let i = 0; i < e.changedTouches.length; i++) {
-      if (e.changedTouches[i].identifier === camTouchId) {
-        camTouchId = null;
-        break;
-      }
-    }
-  };
-
-  areaRight.addEventListener('touchend', resetCam);
-  areaRight.addEventListener('touchcancel', resetCam);
-
-  // Configuração dos Botões de Ação
-  function bindBtn(id, key, code) {
-    const btn = document.getElementById(id);
-    btn.addEventListener('touchstart', (e) => { e.preventDefault(); setKey(key, code, true); });
-    btn.addEventListener('touchend', (e) => { e.preventDefault(); setKey(key, code, false); });
-  }
-
-  bindBtn('btn-subir', ' ', 'Space');
-  bindBtn('btn-descer', 'Shift', 'ShiftLeft');
-  bindBtn('btn-interagir', 'e', 'KeyE');
-
-  const btnFogo = document.getElementById('btn-disparo');
-  if (btnFogo) {
-    btnFogo.addEventListener('touchstart', (e) => {
-      e.preventDefault();
-      window.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, button: 0 }));
-    });
-    btnFogo.addEventListener('touchend', (e) => {
-      e.preventDefault();
-      window.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, button: 0 }));
-    });
-  }
-})();
-</script>
-
-
-<style>
-  /* Joystick Analógico e Controles Touch Profissionais */
-  #touch-canvas-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 99999;
-    pointer-events: none;
-    user-select: none;
-    -webkit-user-select: none;
-  }
-
-  .action-btn {
-    position: fixed;
-    z-index: 100000;
-    background: rgba(0, 0, 0, 0.6);
-    border: 2px solid rgba(0, 255, 150, 0.6);
-    color: #00ff96;
-    font-weight: bold;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    user-select: none;
-    -webkit-user-select: none;
-    font-size: 12px;
-    touch-action: manipulation;
-  }
-  .action-btn:active {
-    background: rgba(0, 255, 150, 0.4);
-    color: white;
-  }
-
-  #btn-subir { right: 20px; bottom: 120px; width: 60px; height: 60px; }
-  #btn-descer { right: 20px; bottom: 45px; width: 60px; height: 60px; }
-  #btn-disparo { right: 90px; bottom: 70px; width: 70px; height: 70px; border-color: #ff4444; color: #ff4444; }
-  #btn-interagir { right: 90px; bottom: 150px; width: 55px; height: 55px; }
-</style>
-
-<div id="btn-subir" class="action-btn">SUBIR</div>
-<div id="btn-descer" class="action-btn">DESCER</div>
-<div id="btn-disparo" class="action-btn">FOGO</div>
-<div id="btn-interagir" class="action-btn">E</div>
-
-<script>
-(function() {
-  const keys = { w: false, a: false, s: false, d: false };
-
-  function setKey(key, code, state) {
-    if (keys[key] === state) return;
-    keys[key] = state;
-    const type = state ? 'keydown' : 'keyup';
-    const ev = new KeyboardEvent(type, { key: key, code: code, bubbles: true });
-    window.dispatchEvent(ev);
-    document.dispatchEvent(ev);
-  }
-
-  const areaLeft = document.createElement('div');
-  areaLeft.style.cssText = 'position:fixed; top:0; left:0; width:50vw; height:100vh; z-index:99998; touch-action:none;';
-  
-  const areaRight = document.createElement('div');
-  areaRight.style.cssText = 'position:fixed; top:0; right:0; width:50vw; height:100vh; z-index:99998; touch-action:none;';
-
-  document.body.appendChild(areaLeft);
-  document.body.appendChild(areaRight);
-
-  const canvas = document.createElement('canvas');
-  canvas.id = 'touch-canvas-overlay';
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  document.body.appendChild(canvas);
-  const ctx = canvas.getContext('2d');
-
-  window.addEventListener('resize', () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  });
-
-  let joyTouchId = null;
-  let joyBase = { x: 0, y: 0 };
-  let joyStick = { x: 0, y: 0 };
-  const maxRadius = 50;
-
-  areaLeft.addEventListener('touchstart', (e) => {
-    if (joyTouchId !== null) return;
-    const touch = e.changedTouches[0];
-    joyTouchId = touch.identifier;
-    joyBase = { x: touch.clientX, y: touch.clientY };
-    joyStick = { x: touch.clientX, y: touch.clientY };
-    drawJoystick();
-  }, { passive: false });
-
-  areaLeft.addEventListener('touchmove', (e) => {
-    for (let i = 0; i < e.changedTouches.length; i++) {
-      if (e.changedTouches[i].identifier === joyTouchId) {
-        const touch = e.changedTouches[i];
-        let dx = touch.clientX - joyBase.x;
-        let dy = touch.clientY - joyBase.y;
-        const dist = Math.hypot(dx, dy);
-
-        if (dist > maxRadius) {
-          dx = (dx / dist) * maxRadius;
-          dy = (dy / dist) * maxRadius;
-        }
-
-        joyStick = { x: joyBase.x + dx, y: joyBase.y + dy };
-
-        setKey('w', 'KeyW', dy < -15);
-        setKey('s', 'KeyS', dy > 15);
-        setKey('a', 'KeyA', dx < -15);
-        setKey('d', 'KeyD', dx > 15);
+        setKey('w', 'KeyW', dy < -12);
+        setKey('s', 'KeyS', dy > 12);
+        setKey('a', 'KeyA', dx < -12);
+        setKey('d', 'KeyD', dx > 12);
 
         drawJoystick();
         break;
@@ -569,18 +229,19 @@ bindTouch('btn-descer', 'Shift', 'ShiftLeft');
 
     ctx.beginPath();
     ctx.arc(joyBase.x, joyBase.y, maxRadius, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
-    ctx.strokeStyle = 'rgba(0, 255, 150, 0.5)';
-    ctx.lineWidth = 2;
+    ctx.fillStyle = 'rgba(0, 255, 150, 0.05)';
+    ctx.strokeStyle = 'rgba(0, 255, 150, 0.3)';
+    ctx.lineWidth = 1.5;
     ctx.fill();
     ctx.stroke();
 
     ctx.beginPath();
-    ctx.arc(joyStick.x, joyStick.y, 25, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(0, 255, 150, 0.7)';
+    ctx.arc(joyStick.x, joyStick.y, 20, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(0, 255, 150, 0.5)';
     ctx.fill();
   }
 
+  // Rotação de Câmera
   let camTouchId = null;
   let lastCamX = 0, lastCamY = 0;
 
@@ -596,8 +257,8 @@ bindTouch('btn-descer', 'Shift', 'ShiftLeft');
     for (let i = 0; i < e.changedTouches.length; i++) {
       if (e.changedTouches[i].identifier === camTouchId) {
         const touch = e.changedTouches[i];
-        const movementX = (touch.clientX - lastCamX) * 2.2;
-        const movementY = (touch.clientY - lastCamY) * 2.2;
+        const movementX = (touch.clientX - lastCamX) * 1.8;
+        const movementY = (touch.clientY - lastCamY) * 1.8;
         lastCamX = touch.clientX;
         lastCamY = touch.clientY;
 
@@ -625,6 +286,7 @@ bindTouch('btn-descer', 'Shift', 'ShiftLeft');
   areaRight.addEventListener('touchend', resetCam);
   areaRight.addEventListener('touchcancel', resetCam);
 
+  // Mapeamento dos Botões HUD
   function bindBtn(id, key, code) {
     const btn = document.getElementById(id);
     if (!btn) return;
@@ -636,7 +298,7 @@ bindTouch('btn-descer', 'Shift', 'ShiftLeft');
   bindBtn('btn-descer', 'Shift', 'ShiftLeft');
   bindBtn('btn-interagir', 'e', 'KeyE');
 
-  const btnFogo = document.getElementById('btn-disparo');
+  const btnFogo = document.getElementById('btn-fogo');
   if (btnFogo) {
     btnFogo.addEventListener('touchstart', (e) => {
       e.preventDefault();
