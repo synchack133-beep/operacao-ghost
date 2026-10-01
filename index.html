@@ -64,11 +64,14 @@ if(objectiveCount>=m.required&&drone.position.distanceTo(new THREE.Vector3(0,gro
 init();
 </script>
 <style>
+  /* Força Tela Cheia Real no Celular */
   html, body {
     margin: 0 !important;
     padding: 0 !important;
-    width: 100vw !important;
-    height: 100vh !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-width: 100vw !important;
+    min-height: 100vh !important;
     overflow: hidden !important;
     background: #050b08 !important;
     touch-action: none !important;
@@ -76,14 +79,28 @@ init();
     -webkit-user-select: none !important;
   }
 
-  canvas {
+  /* Remove limites de largura fixos do container e do Canvas */
+  #game-container, #canvas-container, canvas, .game-wrapper, main, body > div:not(#touch-hud-panel) {
     width: 100vw !important;
     height: 100vh !important;
-    display: block !important;
-    object-fit: contain !important;
+    max-width: none !important;
+    max-height: none !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
-  /* Overlay de controles táticos minimalistas */
+  /* Ajusta o Modal do Menu para caber no celular */
+  #modal, .modal, #menu, .menu-overlay, div[class*="modal"], div[class*="menu"] {
+    max-width: 90vw !important;
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+    z-index: 2000000 !important;
+  }
+
+  /* Overlay de Controles Touch */
   #touch-canvas-overlay {
     position: fixed;
     top: 0;
@@ -94,11 +111,19 @@ init();
     pointer-events: none;
   }
 
-  .hud-btn {
+  .hud-touch-controls {
     position: fixed;
+    bottom: 15px;
+    right: 15px;
     z-index: 1000000;
-    background: rgba(8, 24, 18, 0.7);
-    border: 1px solid rgba(0, 255, 150, 0.4);
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+  }
+
+  .hud-btn {
+    background: rgba(8, 24, 18, 0.8);
+    border: 1px solid rgba(0, 255, 150, 0.5);
     color: #00ff96;
     font-family: monospace;
     font-size: 11px;
@@ -109,28 +134,45 @@ init();
     justify-content: center;
     touch-action: none;
     backdrop-filter: blur(4px);
-    box-shadow: 0 0 8px rgba(0, 255, 150, 0.15);
+    box-shadow: 0 0 10px rgba(0, 255, 150, 0.2);
+    user-select: none;
+    -webkit-user-select: none;
   }
 
   .hud-btn:active {
-    background: rgba(0, 255, 150, 0.4);
+    background: rgba(0, 255, 150, 0.5);
     color: #fff;
     transform: scale(0.92);
   }
 
-  #btn-fogo { right: 25px; bottom: 30px; width: 62px; height: 62px; border-color: rgba(255, 60, 60, 0.6); color: #ff5555; }
-  #btn-subir { right: 25px; bottom: 105px; width: 48px; height: 48px; }
-  #btn-descer { right: 85px; bottom: 30px; width: 48px; height: 48px; }
-  #btn-interagir { right: 85px; bottom: 90px; width: 42px; height: 42px; font-size: 10px; }
+  #btn-fogo { width: 60px; height: 60px; border-color: rgba(255, 65, 65, 0.7); color: #ff5555; font-size: 11px; }
+  #btn-subir { width: 48px; height: 48px; }
+  #btn-descer { width: 48px; height: 48px; }
+  #btn-interagir { width: 42px; height: 42px; font-size: 10px; }
 </style>
 
-<div id="btn-fogo" class="hud-btn">FOGO</div>
-<div id="btn-subir" class="hud-btn">▲</div>
-<div id="btn-descer" class="hud-btn">▼</div>
-<div id="btn-interagir" class="hud-btn">E</div>
+<div class="hud-touch-controls" id="touch-hud-panel">
+  <div id="btn-interagir" class="hud-btn">E</div>
+  <div id="btn-descer" class="hud-btn">▼</div>
+  <div id="btn-subir" class="hud-btn">▲</div>
+  <div id="btn-fogo" class="hud-btn">FOGO</div>
+</div>
 
 <script>
 (function() {
+  // Redimensiona o canvas quando girar a tela
+  function fixCanvasSize() {
+    const canvas = document.querySelector('canvas');
+    if (canvas) {
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+      window.dispatchEvent(new Event('resize'));
+    }
+  }
+  window.addEventListener('resize', fixCanvasSize);
+  window.addEventListener('orientationchange', () => setTimeout(fixCanvasSize, 200));
+  fixCanvasSize();
+
   const keys = { w: false, a: false, s: false, d: false };
 
   function setKey(key, code, state) {
@@ -142,7 +184,7 @@ init();
     document.dispatchEvent(ev);
   }
 
-  // Zonas touch
+  // Zonas de toque
   const areaLeft = document.createElement('div');
   areaLeft.style.cssText = 'position:fixed; top:0; left:0; width:50vw; height:100vh; z-index:999998; touch-action:none;';
   
@@ -152,7 +194,7 @@ init();
   document.body.appendChild(areaLeft);
   document.body.appendChild(areaRight);
 
-  // Canvas Overlay
+  // Overlay Canvas do Joystick
   const canvas = document.createElement('canvas');
   canvas.id = 'touch-canvas-overlay';
   canvas.width = window.innerWidth;
@@ -165,7 +207,7 @@ init();
     canvas.height = window.innerHeight;
   });
 
-  // Joystick Análogo Dinâmico
+  // Joystick Analógico
   let joyTouchId = null;
   let joyBase = { x: 0, y: 0 };
   let joyStick = { x: 0, y: 0 };
@@ -229,19 +271,19 @@ init();
 
     ctx.beginPath();
     ctx.arc(joyBase.x, joyBase.y, maxRadius, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(0, 255, 150, 0.05)';
-    ctx.strokeStyle = 'rgba(0, 255, 150, 0.3)';
+    ctx.fillStyle = 'rgba(0, 255, 150, 0.08)';
+    ctx.strokeStyle = 'rgba(0, 255, 150, 0.4)';
     ctx.lineWidth = 1.5;
     ctx.fill();
     ctx.stroke();
 
     ctx.beginPath();
     ctx.arc(joyStick.x, joyStick.y, 20, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(0, 255, 150, 0.5)';
+    ctx.fillStyle = 'rgba(0, 255, 150, 0.6)';
     ctx.fill();
   }
 
-  // Rotação de Câmera
+  // Controle de Câmera (Lado Direito)
   let camTouchId = null;
   let lastCamX = 0, lastCamY = 0;
 
@@ -286,7 +328,7 @@ init();
   areaRight.addEventListener('touchend', resetCam);
   areaRight.addEventListener('touchcancel', resetCam);
 
-  // Mapeamento dos Botões HUD
+  // Mapeamento dos Botões
   function bindBtn(id, key, code) {
     const btn = document.getElementById(id);
     if (!btn) return;
