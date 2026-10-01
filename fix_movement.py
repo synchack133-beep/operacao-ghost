@@ -1,4 +1,7 @@
-import * as THREE from 'three';
+import os
+
+# 1. PLAYER.JS COM TRATAMENTO SEGURO DE JOYSTICK (PREVINE NaN)
+player_code = '''import * as THREE from 'three';
 
 export class Player {
   constructor(scene, camera, operatorPosition) {
@@ -121,3 +124,24 @@ export class Player {
     return { km: kmSimulated, pct: pct, isWarning: pct > 80 };
   }
 }
+'''
+
+with open('src/entities/Player.js', 'w', encoding='utf-8') as f:
+    f.write(player_code)
+
+# 2. MAIN.JS ATUALIZADO COM CÁLCULO SEGURO DE VELOCIDADE
+with open('src/main.js', 'r', encoding='utf-8') as f:
+    main_content = f.read()
+
+# Substitui o cálculo da velocidade com checagem segura
+old_spd_code = "const speed = Math.round((Math.abs(this.joysticks.input.rightY) + Math.abs(this.joysticks.input.rightX)) * 48);"
+new_spd_code = """const inputVals = this.player.getInputs(this.joysticks.input);
+    const speed = Math.round((Math.abs(inputVals.ry) + Math.abs(inputVals.rx)) * 48);"""
+
+if old_spd_code in main_content:
+    main_content = main_content.replace(old_spd_code, new_spd_code)
+
+with open('src/main.js', 'w', encoding='utf-8') as f:
+    f.write(main_content)
+
+print("Correção aplicada com sucesso!")

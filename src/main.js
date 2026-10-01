@@ -136,7 +136,8 @@ class Game {
     if (this.recentExplosions.length > 5) this.recentExplosions.shift();
 
     const rangeInfo = this.player.getRangeStatus();
-    const speed = Math.round((Math.abs(this.joysticks.input.rightY) + Math.abs(this.joysticks.input.rightX)) * 48);
+    const inputVals = this.player.getInputs(this.joysticks.input);
+    const speed = Math.round((Math.abs(inputVals.ry) + Math.abs(inputVals.rx)) * 48);
 
     document.getElementById('tele-spd').innerText = speed;
     document.getElementById('tele-alt').innerText = Math.round(this.player.position.y);
