@@ -43,6 +43,25 @@
   }
 </style>
 
+
+<style>
+  /* FORÇA O MENU A SER COMPACTO E VISÍVEL EM QUALQUER CELULAR */
+  #modal, .modal, #instructions-modal, #start-modal, div[class*='modal'], div[id*='modal'], div[id*='briefing'] {
+  }
+
+  /* REDUZ O TÍTULO GIGANTE */
+  #modal h1, .modal h1, #modal h2, .modal h2, h1, h2 {
+  }
+
+  /* REDUZ O TEXTO EXPLICATIVO */
+  #modal p, .modal p, p {
+  }
+
+  /* DESTAQUE E VISIBILIDADE DOS BOTÕES */
+  #modal button, .modal button, .btn, button {
+  }
+</style>
+
 </head><body><div id="game"></div><div id="hud"><div id="brand" class="panel">OPERAÇÃO GHOST<small>UNIDADE REMOTA // SIMULAÇÃO FICTÍCIA</small></div><div id="stats" class="panel">ALT <b id="alt">45</b> m<br>VEL <b id="speed">0</b> km/h<br>BATERIA <b id="battery">100</b>%<br>SINAL <b id="signal">100</b>%<br>SISTEMA <b id="health">100</b>%</div><div id="mission" class="panel"><strong id="missionName">01 / PRIMEIRO CONTATO</strong><div id="missionText">Explore o setor e localize o ponto de observação.</div><div id="objective">OBJETIVO: 0 / 2</div><div class="sub">PROTOCOLO: identifique antes de agir.</div></div><div id="reticle"><i></i></div><div id="alert"></div><div id="toast"></div><div id="hint">WASD mover · Espaço subir · Shift descer<br>Mouse olhar · Clique disparo fictício · E interagir · Esc pausar</div><div id="bottom"><button id="viewBtn">VISÃO: NORMAL</button><button id="interactBtn">E · INTERAGIR</button><button id="fireBtn">PULSO · 8</button><button id="pauseBtn">Ⅱ PAUSAR</button></div><div id="mapbox" class="panel"><canvas id="map" width="120" height="120"></canvas></div></div>
 <div class="mobile-controls" id="mobile"><div class="stick" id="stick"><div class="knob" id="knob"></div></div><div id="touchLook"></div><div id="touchButtons"><button id="upBtn">▲ SUBIR</button><button id="downBtn">▼ DESCER</button><button id="touchFire">PULSO</button><button id="touchInteract">AÇÃO</button></div></div>
 <div id="overlay"><div id="card"><div class="eyebrow">CENTRO DE OPERAÇÕES // CANAL SEGURO</div><h1>OPERAÇÃO <span>GHOST</span></h1><p class="desc">Você controla um drone de reconhecimento em uma zona de conflito inteiramente fictícia. Explore, identifique ameaças, proteja unidades aliadas e retorne à base. O jogo prioriza observação, navegação e decisões responsáveis.</p><p class="desc"><b>MISSÃO 01 — PRIMEIRO CONTATO</b><br>Marque dois pontos de interesse e retorne ao círculo da base. Use o pulso de energia fictício apenas contra drones hostis identificados.</p><div class="actions"><button class="primary" id="startBtn">INICIAR MISSÃO</button><button id="howBtn">COMO JOGAR</button></div><div class="tiny" id="menuNote">Carregando ambiente 3D…</div></div></div>
