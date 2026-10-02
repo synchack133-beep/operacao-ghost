@@ -1,4 +1,6 @@
-export class JoystickController {
+import os
+
+joystick_code = '''export class JoystickController {
   constructor(options = {}) {
     this.input = { leftX: 0, leftY: 0, rightX: 0, rightY: 0 };
     this.leftTouchId = null;
@@ -103,4 +105,9 @@ export class JoystickController {
     setupZone(leftZone, leftStick, true);
     setupZone(rightZone, rightStick, false);
   }
-}
+}'''
+
+with open('src/controls/Joystick.js', 'w', encoding='utf-8') as f:
+    f.write(joystick_code)
+
+print("Correção de multi-touch aplicada!")
