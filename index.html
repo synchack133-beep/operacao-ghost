@@ -9,44 +9,41 @@
     html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; background-color: #000; font-family: 'Courier New', monospace; color: #00ff96; }
     #canvas-container { width: 100%; height: 100%; position: absolute; top:0; left:0; z-index: 1; }
 
-    /* Efeito sutil de lente */
     #lens-overlay {
       position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none;
       background: radial-gradient(circle, rgba(0,0,0,0) 65%, rgba(0,0,0,0.6) 100%);
     }
 
-    /* Bússola centralizada no topo */
     #compass-container {
       position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
       padding: 3px 12px; background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(0, 255, 150, 0.3);
       border-radius: 4px; z-index: 10; font-size: 10px; font-weight: bold; letter-spacing: 1px; color: #00ff96;
     }
 
-    /* Telemetria Esquerda (Dados do Drone) */
     .telemetry-left {
       position: absolute; top: 10px; left: 10px; z-index: 10; pointer-events: none;
       font-size: 9px; line-height: 1.4; color: #00ff96; text-shadow: 1px 1px 2px #000;
       background: rgba(0, 0, 0, 0.4); padding: 4px 8px; border-radius: 3px; border-left: 2px solid #00ff96;
     }
 
-    /* Telemetria Direita (Voo e Velocidade) */
     .telemetry-right {
       position: absolute; top: 115px; right: 10px; z-index: 10; pointer-events: none;
       font-size: 9px; line-height: 1.4; color: #00ff96; text-shadow: 1px 1px 2px #000; text-align: right;
       background: rgba(0, 0, 0, 0.4); padding: 4px 8px; border-radius: 3px; border-right: 2px solid #00ff96;
     }
 
-    /* Botão Tela Cheia */
-    #btn-fullscreen {
-      position: absolute; top: 8px; right: 8px; width: 30px; height: 30px;
+    .btn-top {
+      position: absolute; top: 8px; width: 32px; height: 32px;
       background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(0, 255, 150, 0.4);
-      color: #00ff96; font-size: 14px; border-radius: 4px; display: flex;
+      color: #00ff96; font-size: 12px; font-weight: bold; border-radius: 4px; display: flex;
       justify-content: center; align-items: center; pointer-events: auto; z-index: 35; cursor: pointer;
     }
+    #btn-fullscreen { right: 8px; }
+    #btn-view-mode { right: 45px; width: auto; padding: 0 8px; }
+    #btn-op-mode { right: 115px; width: auto; padding: 0 8px; }
     
-    /* Quadro CAM DESTINO (Topo Direito) */
     #pip-container {
-      position: absolute; top: 10px; right: 45px; width: 120px; height: 90px;
+      position: absolute; top: 10px; right: 180px; width: 120px; height: 90px;
       border: 1px solid rgba(0, 255, 150, 0.5); background: rgba(0, 10, 5, 0.7); z-index: 20; pointer-events: none;
       border-radius: 2px;
     }
@@ -55,13 +52,11 @@
       background: rgba(0,0,0,0.6); padding: 1px 3px; border-radius: 2px;
     }
 
-    /* Mira Central Limpa */
     #reticle-overlay {
       position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 8; pointer-events: none;
       display: flex; justify-content: center; align-items: center;
     }
 
-    /* Analógicos Discretos e Semi-transparentes */
     .joystick-zone {
       position: absolute; bottom: 12px; width: 95px; height: 95px; border-radius: 50%;
       background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.15);
@@ -76,7 +71,6 @@
       position: absolute; top: 30px; left: 30px; pointer-events: none;
     }
 
-    /* Botão de Disparo Limpo */
     #btn-drop-missile {
       position: absolute; bottom: 120px; right: 15px; width: 52px; height: 52px; border-radius: 50%;
       background: rgba(255, 60, 60, 0.3); border: 1.5px solid #ff3c3c; color: #ff3c3c;
@@ -85,7 +79,6 @@
     }
     #btn-drop-missile:active { background: rgba(255, 60, 60, 0.8); color: #fff; transform: scale(0.92); opacity: 1; }
 
-    /* Modal de Início */
     .modal {
       position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 8, 5, 0.95);
       z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -108,36 +101,32 @@
   <div id="canvas-container"></div>
   <div id="lens-overlay"></div>
 
-  <!-- Bússola -->
   <div id="compass-container">
     <span id="compass-text">0° [ N ]</span>
   </div>
 
-  <!-- Telemetria Esquerda -->
   <div class="telemetry-left">
     <div><b>BAT:</b> 22.2V</div>
     <div><b>RSSI:</b> -65dBm</div>
     <div><b>SAT:</b> 14 GPS</div>
   </div>
 
-  <!-- Telemetria Direita -->
   <div class="telemetry-right">
     <div><b>SPD:</b> <span id="tele-spd">0</span> km/h</div>
     <div><b>ALT:</b> <span id="tele-alt">12</span> m</div>
     <div><b>DIST:</b> <span id="tele-range">0.00</span> km</div>
   </div>
 
-  <!-- Câmera Secundária (PiP) -->
   <div id="pip-container">
     <div id="pip-title">ALVO 📷</div>
   </div>
 
-  <button id="btn-fullscreen" title="Tela Cheia">⛶</button>
+  <button id="btn-op-mode" class="btn-top">⚔️ COMBATE</button>
+  <button id="btn-view-mode" class="btn-top">🎥 FPV</button>
+  <button id="btn-fullscreen" class="btn-top" title="Tela Cheia">⛶</button>
 
-  <!-- Mira Central Discreta -->
   <div id="reticle-overlay">
     <svg width="100%" height="100%" viewBox="0 0 800 450" preserveAspectRatio="none">
-      <!-- Crosshair central simples -->
       <line x1="385" y1="225" x2="395" y2="225" stroke="#00ff96" stroke-width="1" opacity="0.6"/>
       <line x1="405" y1="225" x2="415" y2="225" stroke="#00ff96" stroke-width="1" opacity="0.6"/>
       <line x1="400" y1="210" x2="400" y2="220" stroke="#00ff96" stroke-width="1" opacity="0.6"/>
@@ -146,18 +135,16 @@
     </svg>
   </div>
 
-  <!-- Controles Touch Discretos -->
   <div id="zone-left" class="joystick-zone"><div id="stick-left" class="joystick-stick"></div></div>
   <div id="zone-right" class="joystick-zone"><div id="stick-right" class="joystick-stick"></div></div>
 
   <button id="btn-drop-missile">🚀</button>
 
-  <!-- Modal Inicial -->
   <div id="modal-start" class="modal">
     <h2 style="color:#00ff96; margin-bottom: 8px;">ZONA DE GUERRA — FPV</h2>
-    <p style="font-size: 12px; line-height: 1.5; max-width: 400px; color: #a3b8a3; margin-bottom: 20px;">
-      Interface limpa e otimizada para celular.<br>
-      Pilotagem FPV nos analógicos e câmera de alvo no canto superior.
+    <p style="font-size: 12px; line-height: 1.5; max-width: 420px; color: #a3b8a3; margin-bottom: 20px;">
+      🚁 <b>Modos de Câmera:</b> Alterne entre 1ª Pessoa (FPV) e 3ª Pessoa (Órbita 360°).<br>
+      ⚔️ <b>Modos de Jogo:</b> Alterne entre Combate e Visual (Tela Limpa).
     </p>
     <button id="btn-start" class="btn-main">DECOLAR</button>
   </div>

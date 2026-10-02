@@ -43,6 +43,7 @@ class Game {
     });
 
     this.setupEvents();
+    this.setupOrbitTouch();
     this.clock = new THREE.Clock();
     this.isPlaying = false;
 
@@ -52,6 +53,8 @@ class Game {
   setupEvents() {
     const btnStart = document.getElementById('btn-start');
     const btnFullscreen = document.getElementById('btn-fullscreen');
+    const btnViewMode = document.getElementById('btn-view-mode');
+    const btnOpMode = document.getElementById('btn-op-mode');
     const btnDrop = document.getElementById('btn-drop-missile');
 
     if (btnFullscreen) {
@@ -60,6 +63,36 @@ class Game {
           document.documentElement.requestFullscreen().catch(() => {});
         } else {
           document.exitFullscreen().catch(() => {});
+        }
+      });
+    }
+
+    if (btnViewMode) {
+      btnViewMode.addEventListener('click', () => {
+        const mode = this.player.toggleViewMode();
+        btnViewMode.innerText = mode === 'FPV' ? '🎥 FPV' : '🚁 3ª PESSOA';
+      });
+    }
+
+    if (btnOpMode) {
+      btnOpMode.addEventListener('click', () => {
+        const op = this.player.toggleOpMode();
+        btnOpMode.innerText = op === 'COMBAT' ? '⚔️ COMBATE' : '👁️ VISUAL';
+
+        const reticle = document.getElementById('reticle-overlay');
+        const pip = document.getElementById('pip-container');
+        const drop = document.getElementById('btn-drop-missile');
+
+        if (op === 'VISUAL') {
+          if (reticle) reticle.style.display = 'none';
+          if (pip) pip.style.display = 'none';
+          if (drop) drop.style.display = 'none';
+          this.targetMarker.visible = false;
+        } else {
+          if (reticle) reticle.style.display = 'flex';
+          if (pip) pip.style.display = 'block';
+          if (drop) drop.style.display = 'flex';
+          this.targetMarker.visible = true;
         }
       });
     }
@@ -77,6 +110,41 @@ class Game {
         this.animate();
       });
     }
+  }
+
+  // Permite arrastar o dedo na área central da tela para girar 360° em 3ª pessoa
+  setupOrbitTouch() {
+    let lastX = 0, lastY = 0;
+    let isDragging = false;
+
+    window.addEventListener('touchstart', (e) => {
+      for (let i = 0; i < e.changedTouches.length; i++) {
+        const t = e.changedTouches[i];
+        if (t.clientX > 120 && t.clientX < window.innerWidth - 120) {
+          isDragging = true;
+          lastX = t.clientX;
+          lastY = t.clientY;
+          break;
+        }
+      }
+    }, { passive: true });
+
+    window.addEventListener('touchmove', (e) => {
+      if (!isDragging || this.player.viewMode !== 'THIRD') return;
+      for (let i = 0; i < e.touches.length; i++) {
+        const t = e.touches[i];
+        if (t.clientX > 100 && t.clientX < window.innerWidth - 100) {
+          const dx = t.clientX - lastX;
+          const dy = t.clientY - lastY;
+          this.player.rotateOrbit(-dx * 0.008, -dy * 0.008);
+          lastX = t.clientX;
+          lastY = t.clientY;
+          break;
+        }
+      }
+    }, { passive: true });
+
+    window.addEventListener('touchend', () => { isDragging = false; });
   }
 
   getTargetImpactPosition() {
@@ -132,21 +200,23 @@ class Game {
 
     this.updateCompass();
 
-    // 1. CÂMERA PRINCIPAL (TELA CHEIA)
+    // 1. CÂMERA PRINCIPAL
     this.renderer.setScissorTest(false);
     this.renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
     this.renderer.render(this.scene, this.camera);
 
-    // 2. CÂMERA SECUNDÁRIA (QUADRO PIP REPOSICIONADO)
-    const pipW = 120;
-    const pipH = 90;
-    const pipX = window.innerWidth - pipW - 45;
-    const pipY = window.innerHeight - pipH - 10;
+    // 2. CÂMERA SECUNDÁRIA (PIP) - Apenas se estiver em modo Combate
+    if (this.player.opMode === 'COMBAT') {
+      const pipW = 120;
+      const pipH = 90;
+      const pipX = window.innerWidth - pipW - 180;
+      const pipY = window.innerHeight - pipH - 10;
 
-    this.renderer.setScissorTest(true);
-    this.renderer.setScissor(pipX, pipY, pipW, pipH);
-    this.renderer.setViewport(pipX, pipY, pipW, pipH);
-    this.renderer.render(this.scene, this.targetCamera);
+      this.renderer.setScissorTest(true);
+      this.renderer.setScissor(pipX, pipY, pipW, pipH);
+      this.renderer.setViewport(pipX, pipY, pipW, pipH);
+      this.renderer.render(this.scene, this.targetCamera);
+    }
   }
 
   onResize() {
