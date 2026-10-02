@@ -12,14 +12,12 @@ export class Player {
     this.cameraTiltX = 0;
     this.cameraRollZ = 0;
 
-    // Modos de Voo e Câmera
     this.viewMode = 'FPV'; // 'FPV' ou 'THIRD'
     this.opMode = 'COMBAT'; // 'COMBAT' ou 'VISUAL'
 
-    // Ângulos da Câmera em 3ª Pessoa (Órbita 360)
     this.orbitYaw = 0;
     this.orbitPitch = 0.3;
-    this.orbitDistance = 4.5;
+    this.orbitDistance = 5.0;
 
     this.speed = 22;
     this.rotSpeed = 2.0;
@@ -35,74 +33,57 @@ export class Player {
   buildDroneMesh() {
     this.droneGroup = new THREE.Group();
 
-    const carbonMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.5 });
-    const metalMat = new THREE.MeshStandardMaterial({ color: 0x777777, metalness: 0.8, roughness: 0.2 });
-    const propMat = new THREE.MeshBasicMaterial({ color: 0x00ff96, transparent: true, opacity: 0.6 });
-    const batteryMat = new THREE.MeshStandardMaterial({ color: 0xffaa00, roughness: 0.6 });
-    const lensMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+    const carbonMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.4 });
+    const metalMat = new THREE.MeshStandardMaterial({ color: 0x888888, metalness: 0.8 });
+    const propMat = new THREE.MeshBasicMaterial({ color: 0x00ff96, transparent: true, opacity: 0.7 });
+    const batteryMat = new THREE.MeshStandardMaterial({ color: 0xffaa00 });
 
-    // Chassi Central X-Frame
-    const centerPlate = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.08, 0.5), carbonMat);
-    this.droneGroup.add(centerPlate);
+    // Corpo Central
+    const body = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.12, 0.6), carbonMat);
+    this.droneGroup.add(body);
 
-    // Bateria LiPo no Topo
-    const battery = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.2, 0.55), batteryMat);
-    battery.position.set(0, 0.14, 0);
+    // Bateria
+    const battery = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.22, 0.5), batteryMat);
+    battery.position.set(0, 0.16, 0);
     this.droneGroup.add(battery);
 
-    // Câmera FPV na Frente
-    const camMount = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.18, 0.2), carbonMat);
-    camMount.position.set(0, 0.05, -0.3);
-    const lens = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.1, 12), lensMat);
-    lens.rotation.x = Math.PI / 2;
-    lens.position.set(0, 0.05, -0.38);
-    this.droneGroup.add(camMount);
-    this.droneGroup.add(lens);
+    // Câmera Frontal
+    const cam = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.18, 0.25), metalMat);
+    cam.position.set(0, 0.02, -0.35);
+    this.droneGroup.add(cam);
 
-    // 4 Braços e Motores com Hélices
+    // 4 Motores e Hélices
     this.props = [];
-    const armPositions = [
-      { x: 0.45, z: -0.45, cw: true },
-      { x: -0.45, z: -0.45, cw: false },
-      { x: 0.45, z: 0.45, cw: false },
-      { x: -0.45, z: 0.45, cw: true }
+    const positions = [
+      { x: 0.5, z: -0.5 },
+      { x: -0.5, z: -0.5 },
+      { x: 0.5, z: 0.5 },
+      { x: -0.5, z: 0.5 }
     ];
 
-    armPositions.forEach(p => {
-      // Braço de Carbono
-      const armGeo = new THREE.BoxGeometry(0.08, 0.04, 0.65);
-      const arm = new THREE.Mesh(armGeo, carbonMat);
+    positions.forEach((p, idx) => {
+      const arm = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.04, 0.7), carbonMat);
       arm.position.set(p.x / 2, 0, p.z / 2);
       arm.rotation.y = Math.atan2(p.x, p.z);
       this.droneGroup.add(arm);
 
-      // Motor Metálico
-      const motor = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.12, 12), metalMat);
+      const motor = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.12, 10), metalMat);
       motor.position.set(p.x, 0.06, p.z);
       this.droneGroup.add(motor);
 
-      // Hélice de 3 Pás
       const propGroup = new THREE.Group();
       for (let b = 0; b < 3; b++) {
-        const blade = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.01, 0.38), propMat);
+        const blade = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.01, 0.4), propMat);
         blade.rotation.y = (b * Math.PI * 2) / 3;
-        blade.position.z = 0.15;
+        blade.position.z = 0.16;
         propGroup.add(blade);
       }
       propGroup.position.set(p.x, 0.13, p.z);
       this.droneGroup.add(propGroup);
-      this.props.push({ mesh: propGroup, cw: p.cw });
+      this.props.push(propGroup);
     });
 
-    // Antena VTX na Traseira
-    const antennaStem = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.3, 8), carbonMat);
-    antennaStem.position.set(0, 0.18, 0.35);
-    antennaStem.rotation.x = -0.3;
-    const antennaTop = new THREE.Mesh(new THREE.SphereGeometry(0.07, 8, 8), metalMat);
-    antennaTop.position.set(0, 0.3, 0.42);
-    this.droneGroup.add(antennaStem);
-    this.droneGroup.add(antennaTop);
-
+    this.droneGroup.visible = false;
     this.scene.add(this.droneGroup);
   }
 
@@ -120,12 +101,7 @@ export class Player {
       if (typeof input.rightX === 'number') rx = input.rightX;
       if (typeof input.rightY === 'number') ry = input.rightY;
     }
-    return {
-      lx: isNaN(lx) ? 0 : lx,
-      ly: isNaN(ly) ? 0 : ly,
-      rx: isNaN(rx) ? 0 : rx,
-      ry: isNaN(ry) ? 0 : ry
-    };
+    return { lx, ly, rx, ry };
   }
 
   toggleViewMode() {
@@ -140,7 +116,7 @@ export class Player {
 
   rotateOrbit(deltaYaw, deltaPitch) {
     this.orbitYaw += deltaYaw;
-    this.orbitPitch = Math.max(-0.5, Math.min(1.2, this.orbitPitch + deltaPitch));
+    this.orbitPitch = Math.max(-0.4, Math.min(1.1, this.orbitPitch + deltaPitch));
   }
 
   update(delta, rawInput) {
@@ -158,12 +134,12 @@ export class Player {
       this.cameraRollZ = THREE.MathUtils.lerp(this.cameraRollZ, 0, delta * 5);
     }
 
-    // Altitude / Pitch Vertical
+    // Altitude
     if (input.ly !== 0) {
       this.position.y -= input.ly * this.speed * delta;
     }
 
-    // Movimentação Horizontal
+    // Movimentação
     const nextPos = this.position.clone();
     if (input.rx !== 0 || input.ry !== 0) {
       const moveVec = new THREE.Vector3(input.rx, 0, input.ry);
@@ -184,10 +160,8 @@ export class Player {
     if (this.position.y < this.minAltitude) this.position.y = this.minAltitude;
     if (this.position.y > this.maxAltitude) this.position.y = this.maxAltitude;
 
-    // Animação de rotação contínua das hélices
-    this.props.forEach(p => {
-      p.mesh.rotation.y += (p.cw ? 35 : -35) * delta;
-    });
+    // Girar Hélices
+    this.props.forEach(p => { p.rotation.y += 30 * delta; });
 
     this.droneGroup.position.copy(this.position);
     this.droneGroup.rotation.set(
@@ -197,9 +171,9 @@ export class Player {
       'YXZ'
     );
 
-    // Ajuste da Câmera (1ªP vs 3ªP Órbita 360)
+    // Câmera 1ªP vs 3ªP Órbita 360
     if (this.viewMode === 'FPV') {
-      this.droneGroup.visible = false; // Esconde o modelo próprio em FPV
+      this.droneGroup.visible = false;
       this.camera.position.copy(this.position);
       this.camera.rotation.set(
         this.rotation.x + this.cameraTiltX,
@@ -208,11 +182,11 @@ export class Player {
         'YXZ'
       );
     } else {
-      this.droneGroup.visible = true; // Mostra o drone em 3ª pessoa
+      this.droneGroup.visible = true;
       const totalYaw = this.rotation.y + this.orbitYaw;
       const camOffset = new THREE.Vector3(
         Math.sin(totalYaw) * Math.cos(this.orbitPitch) * this.orbitDistance,
-        Math.sin(this.orbitPitch) * this.orbitDistance + 0.5,
+        Math.sin(this.orbitPitch) * this.orbitDistance + 0.6,
         Math.cos(totalYaw) * Math.cos(this.orbitPitch) * this.orbitDistance
       );
       this.camera.position.copy(this.position).add(camOffset);
@@ -223,6 +197,6 @@ export class Player {
   getRangeStatus() {
     const kmSimulated = ((this.currentDistance / this.maxRangeMeters) * 3.0).toFixed(2);
     const pct = (this.currentDistance / this.maxRangeMeters) * 100;
-    return { km: kmSimulated, pct: pct, isWarning: pct > 80 };
+    return { km: kmSimulated, pct: pct };
   }
 }

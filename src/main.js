@@ -3,7 +3,6 @@ import { Player } from './entities/Player.js';
 import { SoldierManager } from './entities/Soldier.js';
 import { MissileSystem } from './entities/Missile.js';
 import { ExplosionSystem } from './effects/Explosions.js';
-import { soundManager } from './audio/SoundManager.js';
 import { JoystickController } from './controls/Joystick.js';
 import { Operator } from './entities/Operator.js';
 import { Scenario } from './world/Scenario.js';
@@ -50,101 +49,90 @@ class Game {
     window.addEventListener('resize', () => this.onResize());
   }
 
-  setupEvents() {
-    const btnStart = document.getElementById('btn-start');
-    const btnFullscreen = document.getElementById('btn-fullscreen');
-    const btnViewMode = document.getElementById('btn-view-mode');
-    const btnOpMode = document.getElementById('btn-op-mode');
-    const btnDrop = document.getElementById('btn-drop-missile');
-
-    if (btnFullscreen) {
-      btnFullscreen.addEventListener('click', () => {
-        if (!document.fullscreenElement) {
-          document.documentElement.requestFullscreen().catch(() => {});
-        } else {
-          document.exitFullscreen().catch(() => {});
-        }
-      });
-    }
-
-    if (btnViewMode) {
-      btnViewMode.addEventListener('click', () => {
-        const mode = this.player.toggleViewMode();
-        btnViewMode.innerText = mode === 'FPV' ? '🎥 FPV' : '🚁 3ª PESSOA';
-      });
-    }
-
-    if (btnOpMode) {
-      btnOpMode.addEventListener('click', () => {
-        const op = this.player.toggleOpMode();
-        btnOpMode.innerText = op === 'COMBAT' ? '⚔️ COMBATE' : '👁️ VISUAL';
-
-        const reticle = document.getElementById('reticle-overlay');
-        const pip = document.getElementById('pip-container');
-        const drop = document.getElementById('btn-drop-missile');
-
-        if (op === 'VISUAL') {
-          if (reticle) reticle.style.display = 'none';
-          if (pip) pip.style.display = 'none';
-          if (drop) drop.style.display = 'none';
-          this.targetMarker.visible = false;
-        } else {
-          if (reticle) reticle.style.display = 'flex';
-          if (pip) pip.style.display = 'block';
-          if (drop) drop.style.display = 'flex';
-          this.targetMarker.visible = true;
-        }
-      });
-    }
-
-    if (btnDrop) {
-      btnDrop.addEventListener('touchstart', (e) => { e.preventDefault(); this.dropMissile(); });
-      btnDrop.addEventListener('click', () => this.dropMissile());
-    }
-
-    if (btnStart) {
-      btnStart.addEventListener('click', () => {
-        document.getElementById('modal-start').style.display = 'none';
-        this.isPlaying = true;
-        this.clock.start();
-        this.animate();
-      });
-    }
+  bindButton(id, callback) {
+    const btn = document.getElementById(id);
+    if (!btn) return;
+    const trigger = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      callback();
+    };
+    btn.addEventListener('pointerdown', trigger);
+    btn.addEventListener('click', trigger);
   }
 
-  // Permite arrastar o dedo na área central da tela para girar 360° em 3ª pessoa
+  setupEvents() {
+    this.bindButton('btn-fullscreen', () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    });
+
+    this.bindButton('btn-view-mode', () => {
+      const mode = this.player.toggleViewMode();
+      const btn = document.getElementById('btn-view-mode');
+      if (btn) btn.innerText = mode === 'FPV' ? '🎥 FPV' : '🚁 3ª PESSOA';
+    });
+
+    this.bindButton('btn-op-mode', () => {
+      const op = this.player.toggleOpMode();
+      const btn = document.getElementById('btn-op-mode');
+      if (btn) btn.innerText = op === 'COMBAT' ? '⚔️ COMBATE' : '👁️ VISUAL';
+
+      const reticle = document.getElementById('reticle-overlay');
+      const pip = document.getElementById('pip-container');
+      const drop = document.getElementById('btn-drop-missile');
+
+      if (op === 'VISUAL') {
+        if (reticle) reticle.style.display = 'none';
+        if (pip) pip.style.display = 'none';
+        if (drop) drop.style.display = 'none';
+        this.targetMarker.visible = false;
+      } else {
+        if (reticle) reticle.style.display = 'flex';
+        if (pip) pip.style.display = 'block';
+        if (drop) drop.style.display = 'flex';
+        this.targetMarker.visible = true;
+      }
+    });
+
+    this.bindButton('btn-drop-missile', () => {
+      this.dropMissile();
+    });
+
+    this.bindButton('btn-start', () => {
+      document.getElementById('modal-start').style.display = 'none';
+      this.isPlaying = true;
+      this.clock.start();
+      this.animate();
+    });
+  }
+
   setupOrbitTouch() {
     let lastX = 0, lastY = 0;
     let isDragging = false;
 
-    window.addEventListener('touchstart', (e) => {
-      for (let i = 0; i < e.changedTouches.length; i++) {
-        const t = e.changedTouches[i];
-        if (t.clientX > 120 && t.clientX < window.innerWidth - 120) {
-          isDragging = true;
-          lastX = t.clientX;
-          lastY = t.clientY;
-          break;
-        }
+    window.addEventListener('pointerdown', (e) => {
+      if (e.clientX > 120 && e.clientX < window.innerWidth - 120 && e.clientY < window.innerHeight - 120) {
+        isDragging = true;
+        lastX = e.clientX;
+        lastY = e.clientY;
       }
-    }, { passive: true });
+    });
 
-    window.addEventListener('touchmove', (e) => {
+    window.addEventListener('pointermove', (e) => {
       if (!isDragging || this.player.viewMode !== 'THIRD') return;
-      for (let i = 0; i < e.touches.length; i++) {
-        const t = e.touches[i];
-        if (t.clientX > 100 && t.clientX < window.innerWidth - 100) {
-          const dx = t.clientX - lastX;
-          const dy = t.clientY - lastY;
-          this.player.rotateOrbit(-dx * 0.008, -dy * 0.008);
-          lastX = t.clientX;
-          lastY = t.clientY;
-          break;
-        }
-      }
-    }, { passive: true });
+      const dx = e.clientX - lastX;
+      const dy = e.clientY - lastY;
+      this.player.rotateOrbit(-dx * 0.008, -dy * 0.008);
+      lastX = e.clientX;
+      lastY = e.clientY;
+    });
 
-    window.addEventListener('touchend', () => { isDragging = false; });
+    window.addEventListener('pointerup', () => { isDragging = false; });
+    window.addEventListener('pointercancel', () => { isDragging = false; });
   }
 
   getTargetImpactPosition() {
@@ -200,16 +188,16 @@ class Game {
 
     this.updateCompass();
 
-    // 1. CÂMERA PRINCIPAL
+    // Renderizar Câmera Principal
     this.renderer.setScissorTest(false);
     this.renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
     this.renderer.render(this.scene, this.camera);
 
-    // 2. CÂMERA SECUNDÁRIA (PIP) - Apenas se estiver em modo Combate
+    // Renderizar Câmera Secundária (Apenas no Modo Combate)
     if (this.player.opMode === 'COMBAT') {
-      const pipW = 120;
-      const pipH = 90;
-      const pipX = window.innerWidth - pipW - 180;
+      const pipW = 110;
+      const pipH = 82;
+      const pipX = window.innerWidth - pipW - 235;
       const pipY = window.innerHeight - pipH - 10;
 
       this.renderer.setScissorTest(true);
