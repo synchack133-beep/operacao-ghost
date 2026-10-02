@@ -13,10 +13,7 @@ class Game {
     this.container = document.getElementById('canvas-container');
     this.scene = new THREE.Scene();
 
-    // Câmera Principal (FPV Drone)
     this.camera = new THREE.PerspectiveCamera(62, window.innerWidth / window.innerHeight, 0.1, 380);
-
-    // Câmera Secundária (Visão Ortográfica Superior do Alvo)
     this.targetCamera = new THREE.OrthographicCamera(-12, 12, 12, -12, 0.1, 100);
 
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -24,7 +21,6 @@ class Game {
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.container.appendChild(this.renderer.domElement);
 
-    // Marcador Vermelho do Alvo no Solo
     const targetGeo = new THREE.RingGeometry(0.8, 1.3, 16);
     const targetMat = new THREE.MeshBasicMaterial({ color: 0xff3c3c, side: THREE.DoubleSide });
     this.targetMarker = new THREE.Mesh(targetGeo, targetMat);
@@ -83,7 +79,6 @@ class Game {
     }
   }
 
-  // Calcula onde o drone está apontando no chão
   getTargetImpactPosition() {
     const fwd = this.player.getForwardDirection();
     const impact = this.player.position.clone().add(fwd.multiplyScalar(this.player.position.y * 0.85));
@@ -117,7 +112,6 @@ class Game {
     this.player.update(delta, this.joysticks.input);
     this.scenario.update(delta);
 
-    // Atualiza Posição da Câmera Secundária (Visão Superior do Alvo)
     const targetPos = this.getTargetImpactPosition();
     this.targetMarker.position.copy(targetPos);
 
@@ -138,16 +132,16 @@ class Game {
 
     this.updateCompass();
 
-    // 1. RENDERIZA CÂMERA PRINCIPAL (TELA CHEIA)
+    // 1. CÂMERA PRINCIPAL (TELA CHEIA)
     this.renderer.setScissorTest(false);
     this.renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
     this.renderer.render(this.scene, this.camera);
 
-    // 2. RENDERIZA CÂMERA SECUNDÁRIA (QUADRO PIP NO CANTO SUPERIOR DIREITO)
-    const pipW = 145;
-    const pipH = 105;
-    const pipX = window.innerWidth - pipW - 10;
-    const pipY = window.innerHeight - pipH - 54;
+    // 2. CÂMERA SECUNDÁRIA (QUADRO PIP REPOSICIONADO)
+    const pipW = 120;
+    const pipH = 90;
+    const pipX = window.innerWidth - pipW - 45;
+    const pipY = window.innerHeight - pipH - 10;
 
     this.renderer.setScissorTest(true);
     this.renderer.setScissor(pipX, pipY, pipW, pipH);
