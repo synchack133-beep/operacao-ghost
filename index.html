@@ -11,25 +11,25 @@
 
     #lens-overlay {
       position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none;
-      background: radial-gradient(circle, rgba(0,0,0,0) 65%, rgba(0,0,0,0.6) 100%);
+      background: radial-gradient(circle, rgba(0,0,0,0) 65%, rgba(0,0,0,0.65) 100%);
     }
 
     #compass-container {
       position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
-      padding: 3px 12px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(0, 255, 150, 0.4);
-      border-radius: 4px; z-index: 10; font-size: 10px; font-weight: bold; color: #00ff96;
+      padding: 3px 12px; background: rgba(0, 0, 0, 0.65); border: 1px solid rgba(0, 255, 150, 0.4);
+      border-radius: 4px; z-index: 10; font-size: 10px; font-weight: bold; color: #00ff96; text-shadow: 0 0 4px #00ff96;
     }
 
     .telemetry-left {
       position: absolute; top: 10px; left: 10px; z-index: 10; pointer-events: none;
       font-size: 9px; line-height: 1.4; color: #00ff96; text-shadow: 1px 1px 2px #000;
-      background: rgba(0, 0, 0, 0.5); padding: 4px 8px; border-radius: 3px; border-left: 2px solid #00ff96;
+      background: rgba(0, 0, 0, 0.55); padding: 4px 8px; border-radius: 3px; border-left: 2px solid #00ff96;
     }
 
     .telemetry-right {
       position: absolute; top: 115px; right: 10px; z-index: 10; pointer-events: none;
       font-size: 9px; line-height: 1.4; color: #00ff96; text-shadow: 1px 1px 2px #000; text-align: right;
-      background: rgba(0, 0, 0, 0.5); padding: 4px 8px; border-radius: 3px; border-right: 2px solid #00ff96;
+      background: rgba(0, 0, 0, 0.55); padding: 4px 8px; border-radius: 3px; border-right: 2px solid #00ff96;
     }
 
     .btn-top {
@@ -41,12 +41,13 @@
     }
     .btn-top:active { background: #00ff96; color: #000; }
     #btn-fullscreen { right: 8px; width: 34px; padding: 0; }
-    #btn-view-mode { right: 48px; }
-    #btn-op-mode { right: 140px; }
+    #btn-audio-toggle { right: 48px; width: 34px; padding: 0; }
+    #btn-view-mode { right: 88px; }
+    #btn-op-mode { right: 180px; }
     
     #pip-container {
-      position: absolute; top: 10px; right: 235px; width: 110px; height: 82px;
-      border: 1px solid rgba(0, 255, 150, 0.5); background: rgba(0, 10, 5, 0.8); z-index: 20; pointer-events: none;
+      position: absolute; top: 10px; right: 275px; width: 110px; height: 82px;
+      border: 1px solid rgba(0, 255, 150, 0.6); background: rgba(0, 10, 5, 0.85); z-index: 20; pointer-events: none;
       border-radius: 2px;
     }
     #pip-title {
@@ -61,7 +62,7 @@
 
     .joystick-zone {
       position: absolute; bottom: 12px; width: 100px; height: 100px; border-radius: 50%;
-      background: rgba(255, 255, 255, 0.05); border: 1.5px solid rgba(0, 255, 150, 0.3);
+      background: rgba(255, 255, 255, 0.05); border: 1.5px solid rgba(0, 255, 150, 0.35);
       pointer-events: auto; z-index: 80; touch-action: none;
     }
     #zone-left { left: 12px; }
@@ -73,9 +74,9 @@
     }
 
     #btn-drop-missile {
-      position: absolute; bottom: 125px; right: 18px; width: 54px; height: 54px; border-radius: 50%;
+      position: absolute; bottom: 125px; right: 18px; width: 56px; height: 56px; border-radius: 50%;
       background: rgba(255, 60, 60, 0.35); border: 2px solid #ff3c3c; color: #ff3c3c;
-      font-size: 20px; display: flex; justify-content: center; align-items: center;
+      font-size: 22px; display: flex; justify-content: center; align-items: center;
       pointer-events: auto; z-index: 90; transition: all 0.15s;
     }
     #btn-drop-missile:active { background: rgba(255, 60, 60, 0.9); color: #fff; transform: scale(0.92); }
@@ -88,6 +89,7 @@
     .btn-main {
       pointer-events: auto; background: #00ff96; color: #000; border: none; padding: 12px 28px;
       font-size: 14px; font-weight: bold; border-radius: 3px; cursor: pointer; letter-spacing: 1px;
+      box-shadow: 0 0 12px rgba(0,255,150,0.5);
     }
   </style>
   <script type="importmap">
@@ -107,9 +109,10 @@
   </div>
 
   <div class="telemetry-left">
-    <div><b>BAT:</b> 22.2V</div>
-    <div><b>RSSI:</b> -65dBm</div>
-    <div><b>SAT:</b> 14 GPS</div>
+    <div><b>BAT:</b> <span id="tele-bat">25.2V</span></div>
+    <div><b>RSSI:</b> <span id="tele-rssi">-45dBm</span></div>
+    <div><b>SAT:</b> 16 GPS</div>
+    <div><b>KILLS:</b> <span id="tele-kills">0</span></div>
   </div>
 
   <div class="telemetry-right">
@@ -124,15 +127,18 @@
 
   <button id="btn-op-mode" class="btn-top">⚔️ COMBATE</button>
   <button id="btn-view-mode" class="btn-top">🎥 FPV</button>
+  <button id="btn-audio-toggle" class="btn-top" title="Áudio">🔊</button>
   <button id="btn-fullscreen" class="btn-top" title="Tela Cheia">⛶</button>
 
   <div id="reticle-overlay">
     <svg width="100%" height="100%" viewBox="0 0 800 450" preserveAspectRatio="none">
-      <line x1="385" y1="225" x2="395" y2="225" stroke="#00ff96" stroke-width="1" opacity="0.6"/>
-      <line x1="405" y1="225" x2="415" y2="225" stroke="#00ff96" stroke-width="1" opacity="0.6"/>
-      <line x1="400" y1="210" x2="400" y2="220" stroke="#00ff96" stroke-width="1" opacity="0.6"/>
-      <line x1="400" y1="230" x2="400" y2="240" stroke="#00ff96" stroke-width="1" opacity="0.6"/>
-      <circle cx="400" cy="225" r="2" fill="#ff3c3c"/>
+      <g id="pitch-ladder" transform="translate(400, 225)">
+        <line x1="-25" y1="-30" x2="25" y2="-30" stroke="#00ff96" stroke-width="1" opacity="0.4"/>
+        <line x1="-35" y1="0" x2="-12" y2="0" stroke="#00ff96" stroke-width="1.5" opacity="0.7"/>
+        <line x1="12" y1="0" x2="35" y2="0" stroke="#00ff96" stroke-width="1.5" opacity="0.7"/>
+        <line x1="-25" y1="30" x2="25" y2="30" stroke="#00ff96" stroke-width="1" opacity="0.4"/>
+        <circle cx="0" cy="0" r="2.5" fill="#ff3c3c"/>
+      </g>
     </svg>
   </div>
 
@@ -142,12 +148,15 @@
   <button id="btn-drop-missile">🚀</button>
 
   <div id="modal-start" class="modal">
-    <h2 style="color:#00ff96; margin-bottom: 8px;">ZONA DE GUERRA — FPV</h2>
-    <p style="font-size: 12px; line-height: 1.5; max-width: 420px; color: #a3b8a3; margin-bottom: 20px;">
-      <b>🎥 FPV / 3ª PESSOA:</b> Mude o modo de visão no topo.<br>
-      <b>⚔️ COMBATE / VISUAL:</b> Alterne o HUD para visão limpa.
+    <h2 style="color:#00ff96; margin-bottom: 6px; letter-spacing: 2px;">OPERAÇÃO GHOST v1.0</h2>
+    <p style="font-size: 11px; color: #88ffaa; margin-bottom: 15px;">WAR ZONE FPV SIMULATOR — RELEASE CANDIDATE</p>
+    <p style="font-size: 12px; line-height: 1.6; max-width: 440px; color: #a3b8a3; margin-bottom: 22px;">
+      🕹️ <b>Esquerda:</b> Altura (Sobe/Desce) & Rotação (Yaw)<br>
+      🕹️ <b>Direita:</b> Deslocamento Horizontal (Frente/Trás/Lados)<br>
+      🎥 <b>3ª Pessoa 360°:</b> Arraste o meio da tela para girar a câmera em volta do drone<br>
+      ⚔️ <b>Ataque:</b> Mire com o marcador vermelho e aperte o botão 🚀
     </p>
-    <button id="btn-start" class="btn-main">DECOLAR</button>
+    <button id="btn-start" class="btn-main">INICIAR MISSÃO</button>
   </div>
 
   <script type="module" src="./src/main.js"></script>

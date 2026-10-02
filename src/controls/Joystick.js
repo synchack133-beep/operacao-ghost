@@ -1,6 +1,7 @@
 export class JoystickController {
   constructor(options = {}) {
     this.input = { leftX: 0, leftY: 0, rightX: 0, rightY: 0 };
+    this.deadzone = options.deadzone || 0.08;
     this.setup(options);
   }
 
@@ -38,8 +39,11 @@ export class JoystickController {
 
       stick.style.transform = `translate(${dx}px, ${dy}px)`;
 
-      const normX = dx / maxRadius;
-      const normY = dy / maxRadius;
+      let normX = dx / maxRadius;
+      let normY = dy / maxRadius;
+
+      if (Math.abs(normX) < this.deadzone) normX = 0;
+      if (Math.abs(normY) < this.deadzone) normY = 0;
 
       if (isLeft) {
         this.input.leftX = normX;

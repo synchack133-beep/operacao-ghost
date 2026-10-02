@@ -3,6 +3,7 @@ import { Player } from './entities/Player.js';
 import { SoldierManager } from './entities/Soldier.js';
 import { MissileSystem } from './entities/Missile.js';
 import { ExplosionSystem } from './effects/Explosions.js';
+import { soundManager } from './audio/SoundManager.js';
 import { JoystickController } from './controls/Joystick.js';
 import { Operator } from './entities/Operator.js';
 import { Scenario } from './world/Scenario.js';
@@ -12,15 +13,15 @@ class Game {
     this.container = document.getElementById('canvas-container');
     this.scene = new THREE.Scene();
 
-    this.camera = new THREE.PerspectiveCamera(62, window.innerWidth / window.innerHeight, 0.1, 380);
-    this.targetCamera = new THREE.OrthographicCamera(-12, 12, 12, -12, 0.1, 100);
+    this.camera = new THREE.PerspectiveCamera(62, window.innerWidth / window.innerHeight, 0.1, 400);
+    this.targetCamera = new THREE.OrthographicCamera(-14, 14, 14, -14, 0.1, 120);
 
-    this.renderer = new THREE.WebGLRenderer({ antialias: true });
+    this.renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     this.container.appendChild(this.renderer.domElement);
 
-    const targetGeo = new THREE.RingGeometry(0.8, 1.3, 16);
+    const targetGeo = new THREE.RingGeometry(0.8, 1.4, 16);
     const targetMat = new THREE.MeshBasicMaterial({ color: 0xff3c3c, side: THREE.DoubleSide });
     this.targetMarker = new THREE.Mesh(targetGeo, targetMat);
     this.targetMarker.rotation.x = -Math.PI / 2;
@@ -70,6 +71,12 @@ class Game {
       }
     });
 
+    this.bindButton('btn-audio-toggle', () => {
+      const muted = soundManager.toggleMute();
+      const btn = document.getElementById('btn-audio-toggle');
+      if (btn) btn.innerText = muted ? '🔇' : '🔊';
+    });
+
     this.bindButton('btn-view-mode', () => {
       const mode = this.player.toggleViewMode();
       const btn = document.getElementById('btn-view-mode');
@@ -103,6 +110,9 @@ class Game {
     });
 
     this.bindButton('btn-start', () => {
+      soundManager.init();
+      soundManager.resume();
+
       document.getElementById('modal-start').style.display = 'none';
       this.isPlaying = true;
       this.clock.start();
@@ -148,7 +158,7 @@ class Game {
     this.missileSystem.spawnMissile(this.player.position, targetPos);
   }
 
-  updateCompass() {
+  updateCompassAndHUD() {
     const deg = Math.round(((-this.camera.rotation.y * 180 / Math.PI) % 360 + 360) % 360);
     const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
     const idx = Math.round(deg / 45) % 8;
@@ -156,6 +166,13 @@ class Game {
     const compassText = document.getElementById('compass-text');
     if (compassText) {
       compassText.innerText = `${deg}° [ ${directions[idx]} ]`;
+    }
+
+    const pitchLadder = document.getElementById('pitch-ladder');
+    if (pitchLadder) {
+      const pitchDeg = (this.player.cameraTiltX * 180 / Math.PI) * 1.5;
+      const rollDeg = (this.player.cameraRollZ * 180 / Math.PI);
+      pitchLadder.setAttribute('transform', `translate(400, ${225 + pitchDeg}) rotate(${rollDeg})`);
     }
   }
 
@@ -167,6 +184,9 @@ class Game {
 
     this.player.update(delta, this.joysticks.input);
     this.scenario.update(delta);
+    this.soldierManager.update(delta);
+    this.missileSystem.update(delta, this.explosionSystem, this.soldierManager);
+    this.explosionSystem.update(delta);
 
     const targetPos = this.getTargetImpactPosition();
     this.targetMarker.position.copy(targetPos);
@@ -175,29 +195,33 @@ class Game {
     this.targetCamera.lookAt(targetPos.x, targetPos.y, targetPos.z);
 
     const inputs = this.player.getInputs(this.joysticks.input);
-    const speed = Math.round((Math.abs(inputs.ry) + Math.abs(inputs.rx)) * 48);
+    const speed = Math.round((Math.abs(inputs.ry) + Math.abs(inputs.rx)) * 52);
     const rangeInfo = this.player.getRangeStatus();
 
     const teleSpd = document.getElementById('tele-spd');
     const teleAlt = document.getElementById('tele-alt');
     const teleRange = document.getElementById('tele-range');
+    const teleBat = document.getElementById('tele-bat');
+    const teleRssi = document.getElementById('tele-rssi');
+    const teleKills = document.getElementById('tele-kills');
 
     if (teleSpd) teleSpd.innerText = speed;
     if (teleAlt) teleAlt.innerText = Math.round(this.player.position.y);
     if (teleRange) teleRange.innerText = rangeInfo.km;
+    if (teleBat) teleBat.innerText = `${this.player.batteryVoltage.toFixed(1)}V`;
+    if (teleRssi) teleRssi.innerText = `${rangeInfo.rssi}dBm`;
+    if (teleKills) teleKills.innerText = this.soldierManager.kills;
 
-    this.updateCompass();
+    this.updateCompassAndHUD();
 
-    // Renderizar Câmera Principal
     this.renderer.setScissorTest(false);
     this.renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
     this.renderer.render(this.scene, this.camera);
 
-    // Renderizar Câmera Secundária (Apenas no Modo Combate)
     if (this.player.opMode === 'COMBAT') {
       const pipW = 110;
       const pipH = 82;
-      const pipX = window.innerWidth - pipW - 235;
+      const pipX = window.innerWidth - pipW - 275;
       const pipY = window.innerHeight - pipH - 10;
 
       this.renderer.setScissorTest(true);
